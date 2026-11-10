@@ -58,6 +58,18 @@ async function apiRequest(endpoint, options = {}) {
 // Auth Modal & Session Management
 let authModalCanClose = true;
 
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === "password") {
+    input.type = "text";
+    btn.textContent = "🙈";
+  } else {
+    input.type = "password";
+    btn.textContent = "👁️";
+  }
+}
+
 function openLoginModal(tab = "login", allowClose = true) {
   authModalCanClose = allowClose;
   const closeBtn = document.getElementById("modal-auth-close-btn");
