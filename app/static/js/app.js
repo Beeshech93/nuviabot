@@ -190,7 +190,7 @@ async function submitLoginForm(e) {
     switchView(activeView || "overview");
   } catch (err) {
     if (errBox) {
-      errBox.textContent = `❌ ${err.message}`;
+      errBox.innerHTML = `❌ <strong>No se pudo ingresar:</strong> ${err.message}<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);"><span style="color:#e2e8f0;font-size:0.8rem;">¿Aún no has registrado tu cuenta?</span> <button type="button" onclick="goToRegisterWithEmail('${email}')" style="margin-left:6px;background:var(--primary);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;">✨ Crear mi cuenta ahora</button></div>`;
       errBox.style.display = "block";
     } else {
       showToast(err.message, "danger");
@@ -201,6 +201,17 @@ async function submitLoginForm(e) {
       btn.textContent = "Entrar a mi Cuenta";
     }
   }
+}
+
+function goToRegisterWithEmail(email) {
+  switchAuthTab('register');
+  const regEmail = document.getElementById("reg-email");
+  if (regEmail && email) regEmail.value = email;
+  const regPwd = document.getElementById("reg-password");
+  const loginPwd = document.getElementById("login-password");
+  if (regPwd && loginPwd && loginPwd.value) regPwd.value = loginPwd.value;
+  const orgInput = document.getElementById("reg-org-name");
+  if (orgInput) orgInput.focus();
 }
 
 async function submitRegisterForm(e) {

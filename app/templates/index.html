@@ -1871,9 +1871,9 @@ textarea.form-control {
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/js/i18n.js?v=20261110_03"></script>
-<script src="/static/js/charts.js?v=20261110_03"></script>
-<script src="/static/js/app.js?v=20261110_03"></script>
+<script src="/static/js/i18n.js?v=20261110_04"></script>
+<script src="/static/js/charts.js?v=20261110_04"></script>
+<script src="/static/js/app.js?v=20261110_04"></script>
 <script>
 // Global Instant Auth Handlers
 function openLoginModal(tab = "register", allowClose = true) {
@@ -1944,6 +1944,17 @@ function logout() {
     }
     openLoginModal("login", true);
   }
+}
+
+function goToRegisterWithEmail(email) {
+  switchAuthTab('register');
+  const regEmail = document.getElementById("reg-email");
+  if (regEmail && email) regEmail.value = email;
+  const regPwd = document.getElementById("reg-password");
+  const loginPwd = document.getElementById("login-password");
+  if (regPwd && loginPwd && loginPwd.value) regPwd.value = loginPwd.value;
+  const orgInput = document.getElementById("reg-org-name");
+  if (orgInput) orgInput.focus();
 }
 // Assistant helpers
 function sendAssistantPrompt(text) {

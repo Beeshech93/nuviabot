@@ -94,7 +94,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
 def login(req: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == req.email.lower()).first()
     if not user or not verify_password(req.password, user.hashed_password):
-        raise UnauthorizedException("Invalid email or password.")
+        raise UnauthorizedException("Correo o contraseña incorrectos. Si es tu primera vez, por favor crea tu cuenta en la pestaña 'Crear Cuenta Real'.")
 
     if not user.is_active:
         raise UnauthorizedException("Account is disabled. Please contact your administrator.")
