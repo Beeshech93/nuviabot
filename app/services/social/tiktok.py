@@ -19,9 +19,10 @@ class TikTokAdapter(SocialAdapter):
         if not settings.TIKTOK_CLIENT_KEY:
             return f"/api/v1/social/callback/tiktok?code=sandbox_tt_auth_{state[:8]}&state={state}"
 
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/tiktok"
         params = {
             "client_key": settings.TIKTOK_CLIENT_KEY,
-            "redirect_uri": settings.TIKTOK_REDIRECT_URI,
+            "redirect_uri": redirect_uri,
             "response_type": "code",
             "scope": ",".join(self.SCOPES),
             "state": state,
@@ -37,6 +38,7 @@ class TikTokAdapter(SocialAdapter):
                 "open_id": "mock_tiktok_open_id_123",
             }
 
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/tiktok"
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 self.TOKEN_URL,
@@ -45,7 +47,7 @@ class TikTokAdapter(SocialAdapter):
                     "client_secret": settings.TIKTOK_CLIENT_SECRET,
                     "code": code,
                     "grant_type": "authorization_code",
-                    "redirect_uri": settings.TIKTOK_REDIRECT_URI,
+                    "redirect_uri": redirect_uri,
                 },
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 timeout=15.0,

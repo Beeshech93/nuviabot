@@ -71,3 +71,78 @@ async def test_mock_adapter_publishing_flows():
         assert result["platform"] == platform
         assert result["status"] == "published"
 
+
+def test_meta_webhook_challenge(client):
+    from app.config import settings
+
+    # Successful challenge
+    res = client.get(
+        "/api/v1/social/webhook/meta",
+        params={
+            "hub.mode": "subscribe",
+            "hub.verify_token": settings.META_WEBHOOK_VERIFY_TOKEN,
+            "hub.challenge": "1158201444",
+        },
+    )
+    assert res.status_code == 200
+    assert res.text == "1158201444"
+
+    # Failed challenge token mismatch
+    res_fail = client.get(
+        "/api/v1/social/webhook/meta",
+        params={
+            "hub.mode": "subscribe",
+            "hub.verify_token": "wrong_token",
+            "hub.challenge": "1158201444",
+        },
+    )
+    assert res_fail.status_code == 403
+
+
+def test_meta_webhook_incoming_event(client):
+    payload = {
+        "object": "instagram",
+        "entry": [
+            {
+                "id": "17841400000000001",
+                "time": 1740000000,
+                "changes": [{"field": "comments", "value": {"id": "123", "text": "Great post!"}}],
+            }
+        ],
+    }
+    res = client.post("/api/v1/social/webhook/meta", json=payload)
+    assert res.status_code == 200
+    assert res.json()["status"] == "success"
+
+
+def test_live_integrations_management(client, auth_headers):
+    # 1. Get live integrations
+    res = client.get("/api/v1/settings/integrations", headers=auth_headers)
+    assert res.status_code == 200
+    data = res.json()
+    assert "meta" in data
+    assert "tiktok" in data
+    assert "youtube" in data
+    assert "openai" in data
+
+    # 2. Update integrations
+    update_res = client.put(
+        "/api/v1/settings/integrations",
+        headers=auth_headers,
+        json={
+            "openai_api_key": "sk-proj-testkey1234567890",
+            "meta_app_id": "987654321098765",
+            "meta_app_secret": "secret9876543210",
+        },
+    )
+    assert update_res.status_code == 200
+    updated_data = update_res.json()
+    assert updated_data["meta"]["is_live"] is True
+    assert updated_data["openai"]["is_live"] is True
+
+    # 3. Test ping endpoint
+    test_res = client.post("/api/v1/settings/integrations/test/tiktok", headers=auth_headers)
+    assert test_res.status_code == 200
+    assert "platform" in test_res.json()
+
+

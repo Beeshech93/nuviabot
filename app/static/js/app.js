@@ -867,7 +867,7 @@ async function checkoutPlan(code) {
   }
 }
 
-// 11. SETTINGS
+// 11. SETTINGS & LIVE APIS
 async function loadSettings() {
   try {
     const s = await apiRequest("/settings");
@@ -877,19 +877,125 @@ async function loadSettings() {
     document.getElementById("set-timezone").value = s.timezone;
     document.getElementById("set-auto-publish").checked = s.auto_publish_enabled;
 
-    // Checks list
-    const checksWrap = document.getElementById("settings-api-checks");
-    checksWrap.innerHTML = `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;">
-        <div>Meta (Instagram/Facebook): <strong>${s.meta_configured ? 'Configurado' : 'Modo Sandbox'}</strong></div>
-        <div>TikTok Content API: <strong>${s.tiktok_configured ? 'Configurado' : 'Modo Sandbox'}</strong></div>
-        <div>YouTube / Google OAuth: <strong>${s.youtube_configured ? 'Configurado' : 'Modo Sandbox'}</strong></div>
-        <div>OpenAI Content Studio: <strong>${s.openai_configured ? 'API Key Activa' : 'Generador Multilingüe Integrado'}</strong></div>
-        <div>Stripe Billing: <strong>${s.stripe_configured ? 'Configurado' : 'Modo Sandbox'}</strong></div>
-      </div>
-    `;
+    // Load Live Integration Settings
+    try {
+      const live = await apiRequest("/settings/integrations");
+
+      // Update Meta
+      const metaBadge = document.getElementById("badge-meta-status");
+      if (metaBadge) {
+        metaBadge.textContent = live.meta.is_live ? "LIVE OFICIAL" : "SANDBOX";
+        metaBadge.className = `status-badge ${live.meta.is_live ? 'status-published' : 'status-pending_approval'}`;
+      }
+      const metaCb = document.getElementById("int-meta-callback");
+      if (metaCb) metaCb.textContent = live.meta.callback_url;
+
+      // Update TikTok
+      const ttBadge = document.getElementById("badge-tiktok-status");
+      if (ttBadge) {
+        ttBadge.textContent = live.tiktok.is_live ? "LIVE OFICIAL" : "SANDBOX";
+        ttBadge.className = `status-badge ${live.tiktok.is_live ? 'status-published' : 'status-pending_approval'}`;
+      }
+      const ttCb = document.getElementById("int-tiktok-callback");
+      if (ttCb) ttCb.textContent = live.tiktok.callback_url;
+
+      // Update YouTube
+      const ytBadge = document.getElementById("badge-youtube-status");
+      if (ytBadge) {
+        ytBadge.textContent = live.youtube.is_live ? "LIVE OFICIAL" : "SANDBOX";
+        ytBadge.className = `status-badge ${live.youtube.is_live ? 'status-published' : 'status-pending_approval'}`;
+      }
+      const ytCb = document.getElementById("int-youtube-callback");
+      if (ytCb) ytCb.textContent = live.youtube.callback_url;
+
+      // Update OpenAI
+      const aiBadge = document.getElementById("badge-openai-status");
+      if (aiBadge) {
+        aiBadge.textContent = live.openai.is_live ? "LIVE OFICIAL" : "HEURÍSTICO";
+        aiBadge.className = `status-badge ${live.openai.is_live ? 'status-published' : 'status-pending_approval'}`;
+      }
+
+      // Global badge
+      const globalBadge = document.getElementById("global-live-badge");
+      if (globalBadge) {
+        const liveCount = [live.meta.is_live, live.tiktok.is_live, live.youtube.is_live, live.openai.is_live].filter(Boolean).length;
+        if (liveCount >= 3) {
+          globalBadge.textContent = `🟢 MODO LIVE ACTIVO (${liveCount}/4)`;
+          globalBadge.style.background = "rgba(16, 185, 129, 0.15)";
+          globalBadge.style.color = "#34d399";
+        } else if (liveCount > 0) {
+          globalBadge.textContent = `⚡ MODO HÍBRIDO (${liveCount} Live, ${4 - liveCount} Sandbox)`;
+          globalBadge.style.background = "rgba(245, 158, 11, 0.15)";
+          globalBadge.style.color = "#fbbf24";
+        } else {
+          globalBadge.textContent = "🟡 MODO SANDBOX ACTIVO";
+          globalBadge.style.background = "rgba(245, 158, 11, 0.15)";
+          globalBadge.style.color = "#fbbf24";
+        }
+      }
+    } catch (err) {
+      console.warn("Could not load /settings/integrations:", err);
+    }
   } catch (e) {
     console.error(e);
+  }
+}
+
+async function saveLiveIntegrationsForm(e) {
+  if (e) e.preventDefault();
+  const payload = {};
+
+  const metaId = document.getElementById("int-meta-id").value.trim();
+  if (metaId) payload.meta_app_id = metaId;
+
+  const metaSec = document.getElementById("int-meta-secret").value.trim();
+  if (metaSec) payload.meta_app_secret = metaSec;
+
+  const ttKey = document.getElementById("int-tiktok-key").value.trim();
+  if (ttKey) payload.tiktok_client_key = ttKey;
+
+  const ttSec = document.getElementById("int-tiktok-secret").value.trim();
+  if (ttSec) payload.tiktok_client_secret = ttSec;
+
+  const gId = document.getElementById("int-google-id").value.trim();
+  if (gId) payload.google_client_id = gId;
+
+  const gSec = document.getElementById("int-google-secret").value.trim();
+  if (gSec) payload.google_client_secret = gSec;
+
+  const aiKey = document.getElementById("int-openai-key").value.trim();
+  if (aiKey) payload.openai_api_key = aiKey;
+
+  try {
+    await apiRequest("/settings/integrations", {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    });
+    showToast("Credenciales Live guardadas y activadas con éxito.", "success");
+    loadSettings();
+  } catch (err) {
+    showToast("Error al guardar credenciales: " + err.message, "danger");
+  }
+}
+
+async function testLivePlatform(platform) {
+  showToast(`Verificando conexión en vivo con ${platform.toUpperCase()}...`, "info");
+  try {
+    const res = await apiRequest(`/settings/integrations/test/${platform}`, { method: "POST" });
+    if (res.success) {
+      showToast(`✅ [${platform.toUpperCase()}]: ${res.message} (${res.latency_ms}ms)`, "success");
+    } else {
+      showToast(`❌ [${platform.toUpperCase()}]: ${res.message}`, "danger");
+    }
+  } catch (err) {
+    showToast(`Error al probar ${platform}: ` + err.message, "danger");
+  }
+}
+
+async function testAllLivePlatforms() {
+  const platforms = ["openai", "meta", "tiktok", "youtube"];
+  for (const p of platforms) {
+    await testLivePlatform(p);
   }
 }
 

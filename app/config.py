@@ -43,10 +43,16 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o-mini"
 
     # Social APIs OAuth Credentials
+    APP_BASE_URL: str = (
+        f"https://{os.getenv('VERCEL_URL')}"
+        if os.getenv("VERCEL_URL")
+        else "http://localhost:8000"
+    )
     # Meta (Instagram Graph API & Facebook Graph API)
     META_APP_ID: str = ""
     META_APP_SECRET: str = ""
     META_REDIRECT_URI: str = "http://localhost:8000/api/v1/social/callback/meta"
+    META_WEBHOOK_VERIFY_TOKEN: str = "nuvio_webhook_verify_secret_2026"
 
     # TikTok Content Posting API
     TIKTOK_CLIENT_KEY: str = ""

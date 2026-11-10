@@ -10,11 +10,13 @@ from app.api.v1.posts import router as posts_router
 from app.api.v1.settings import router as settings_router
 from app.api.v1.social import router as social_router
 from app.api.v1.team import router as team_router
+from app.api.v1.webhooks import router as webhooks_router
 
 api_router = APIRouter()
 
 api_router.include_router(auth_router)
 api_router.include_router(social_router)
+api_router.include_router(webhooks_router)
 api_router.include_router(posts_router)
 api_router.include_router(approvals_router)
 api_router.include_router(ai_router)

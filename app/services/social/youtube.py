@@ -23,9 +23,10 @@ class YouTubeAdapter(SocialAdapter):
         if not settings.GOOGLE_CLIENT_ID:
             return f"/api/v1/social/callback/youtube?code=sandbox_yt_auth_{state[:8]}&state={state}"
 
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/youtube"
         params = {
             "client_id": settings.GOOGLE_CLIENT_ID,
-            "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+            "redirect_uri": redirect_uri,
             "response_type": "code",
             "scope": " ".join(self.SCOPES),
             "access_type": "offline",
@@ -43,6 +44,7 @@ class YouTubeAdapter(SocialAdapter):
                 "token_type": "Bearer",
             }
 
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/youtube"
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 self.TOKEN_URL,
@@ -51,7 +53,7 @@ class YouTubeAdapter(SocialAdapter):
                     "client_secret": settings.GOOGLE_CLIENT_SECRET,
                     "code": code,
                     "grant_type": "authorization_code",
-                    "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                    "redirect_uri": redirect_uri,
                 },
                 timeout=15.0,
             )

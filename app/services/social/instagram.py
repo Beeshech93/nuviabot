@@ -24,7 +24,7 @@ class InstagramAdapter(SocialAdapter):
         if not settings.META_APP_ID:
             return f"/api/v1/social/callback/instagram?code=sandbox_ig_auth_{state[:8]}&state={state}"
 
-        redirect_uri = settings.META_REDIRECT_URI.replace("/meta", "/instagram")
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/instagram"
         params = {
             "client_id": settings.META_APP_ID,
             "redirect_uri": redirect_uri,
@@ -44,13 +44,14 @@ class InstagramAdapter(SocialAdapter):
                 "token_type": "bearer",
             }
 
+        redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/instagram"
         async with httpx.AsyncClient() as client:
             resp = await client.get(
                 f"{self.BASE_GRAPH_URL}/oauth/access_token",
                 params={
                     "client_id": settings.META_APP_ID,
                     "client_secret": settings.META_APP_SECRET,
-                    "redirect_uri": settings.META_REDIRECT_URI,
+                    "redirect_uri": redirect_uri,
                     "code": code,
                 },
                 timeout=15.0,
