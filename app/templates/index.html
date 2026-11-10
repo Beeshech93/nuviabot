@@ -760,10 +760,20 @@ textarea.form-control {
     </nav>
 
     <div class="sidebar-footer">
-      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="user-avatar" alt="Avatar">
-      <div class="user-details">
-        <div class="user-name" id="currentUserName">Alex Rivera</div>
-        <div class="user-org" id="currentUserOrg">Nuvio Growth Agency</div>
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="user-avatar" id="currentUserAvatar" alt="Avatar">
+        <div class="user-details" style="min-width:0;flex:1;">
+          <div class="user-name" id="currentUserName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Alex Rivera</div>
+          <div class="user-org" id="currentUserOrg" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Nuvio Growth Agency</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="btn btn-icon btn-sm" onclick="openLoginModal('login')" title="Cambiar cuenta / Iniciar sesión" style="padding:6px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border);cursor:pointer;">
+          <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </button>
+        <button class="btn btn-icon btn-sm" onclick="logout()" title="Cerrar sesión" style="padding:6px;border-radius:6px;background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.25);cursor:pointer;">
+          <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
       </div>
     </div>
   </aside>
@@ -1665,6 +1675,125 @@ textarea.form-control {
     </form>
   </div>
 </div>
+
+<!-- MODAL: AUTHENTICATION (LOGIN & REGISTRATION) -->
+<div class="modal-overlay" id="modal-auth" style="z-index: 9999;">
+  <div class="modal-dialog" style="max-width: 480px; border-radius: 16px; border: 1px solid var(--border-focus); box-shadow: 0 20px 40px rgba(0,0,0,0.85);">
+    <div class="modal-header" style="flex-direction: column; align-items: center; text-align: center; gap: 8px; position: relative; padding-bottom: 16px;">
+      <button class="modal-close" id="modal-auth-close-btn" onclick="closeAuthModal()" style="position: absolute; right: 20px; top: 20px;">&times;</button>
+      <div style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.35rem; color: #fff; box-shadow: 0 0 20px rgba(99,102,241,0.5);">
+        N
+      </div>
+      <div>
+        <h3 class="modal-title" style="font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em;">Nuvio Growth Suite</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Gestión de Redes Sociales impulsada por IA</p>
+      </div>
+
+      <!-- Auth Tabs Switcher -->
+      <div style="display: flex; background: var(--bg-input); padding: 4px; border-radius: 10px; border: 1px solid var(--border); width: 100%; margin-top: 10px;">
+        <button type="button" id="tab-btn-login" class="btn btn-sm" onclick="switchAuthTab('login')" style="flex: 1; border-radius: 8px; font-weight: 700; transition: all 0.2s; background: var(--primary); color: #fff; justify-content: center;">
+          Iniciar Sesión
+        </button>
+        <button type="button" id="tab-btn-register" class="btn btn-sm" onclick="switchAuthTab('register')" style="flex: 1; border-radius: 8px; font-weight: 700; transition: all 0.2s; background: transparent; color: var(--text-muted); justify-content: center;">
+          Crear Cuenta
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: LOGIN -->
+    <div id="auth-tab-login" class="modal-body" style="padding-top: 16px;">
+      <div id="login-alert-error" class="alert alert-danger" style="display: none; font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #fca5a5;"></div>
+
+      <form id="form-login" onsubmit="submitLoginForm(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Correo Electrónico</label>
+          <input type="email" id="login-email" class="form-control" placeholder="tu@empresa.com" required autocomplete="email" style="font-size: 0.9rem;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" for="login-password" style="margin-bottom: 0;">Contraseña</label>
+          </div>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password" style="font-size: 0.9rem;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; padding: 12px; font-weight: 700; margin-top: 10px; font-size: 0.95rem; justify-content: center;">
+          Entrar a mi Cuenta
+        </button>
+      </form>
+
+      <!-- Quick Demo Access Box -->
+      <div style="margin-top: 20px; padding: 14px; border-radius: 10px; background: rgba(99, 102, 241, 0.08); border: 1px dashed rgba(99, 102, 241, 0.35); text-align: center;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: #a5b4fc; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;">
+          ⚡ Acceso Rápido Administrador / Demo
+        </div>
+        <p style="font-size: 0.78rem; color: var(--text-dim); margin-bottom: 10px;">
+          Accede inmediatamente con la cuenta principal preconfigurada.
+        </p>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="loginDemo()" style="width: 100%; font-weight: 700; justify-content: center; background: rgba(255,255,255,0.06);">
+          Entrar como Demo Admin (1 Clic)
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: REGISTER -->
+    <div id="auth-tab-register" class="modal-body" style="display: none; padding-top: 16px;">
+      <div id="register-alert-error" class="alert alert-danger" style="display: none; font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #fca5a5;"></div>
+
+      <form id="form-register" onsubmit="submitRegisterForm(event)">
+        <div class="form-group">
+          <label class="form-label" for="reg-org-name">Nombre de la Empresa u Organización</label>
+          <input type="text" id="reg-org-name" class="form-control" placeholder="Ej: Mi Agencia Digital" required style="font-size: 0.9rem;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-full-name">Nombre Completo del Administrador</label>
+          <input type="text" id="reg-full-name" class="form-control" placeholder="Ej: Carlos Santana" required style="font-size: 0.9rem;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Correo Electrónico</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="admin@miagencia.com" required autocomplete="email" style="font-size: 0.9rem;">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Contraseña</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password" style="font-size: 0.9rem;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-industry">Industria / Nicho</label>
+            <select id="reg-industry" class="form-control" style="font-size: 0.88rem;">
+              <option value="Marketing Digital">Marketing Digital</option>
+              <option value="E-commerce & Retail">E-commerce & Retail</option>
+              <option value="Tecnología & SaaS">Tecnología & SaaS</option>
+              <option value="Moda & Belleza">Moda & Belleza</option>
+              <option value="Salud & Fitness">Salud & Fitness</option>
+              <option value="Finanzas & Inversión">Finanzas & Inversión</option>
+              <option value="Educación">Educación</option>
+              <option value="Restaurantes & Gastronomía">Restaurantes & Gastronomía</option>
+              <option value="Servicios Profesionales">Servicios Profesionales</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-language">Idioma Preferido</label>
+          <select id="reg-language" class="form-control" style="font-size: 0.88rem;">
+            <option value="es">Español (ES)</option>
+            <option value="en">English (EN)</option>
+            <option value="ht">Kreyòl Ayisyen (HT)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-register-submit" style="width: 100%; padding: 12px; font-weight: 700; margin-top: 10px; font-size: 0.95rem; justify-content: center;">
+          Crear Organización y Empezar Gratis
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>

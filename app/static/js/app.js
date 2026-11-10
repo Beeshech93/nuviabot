@@ -37,9 +37,12 @@ async function apiRequest(endpoint, options = {}) {
   try {
     const res = await fetch(`/api/v1${endpoint}`, { credentials: "omit", ...options, headers });
     if (res.status === 401) {
-      // Re-authenticate
-      await autoLogin();
-      return;
+      // Token expired or unauthorized
+      localStorage.removeItem("nuvio_token");
+      authToken = "";
+      currentUser = null;
+      openLoginModal("login", false);
+      throw new Error("Sesión expirada o no autorizada. Por favor ingresa tus credenciales.");
     }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -52,27 +55,200 @@ async function apiRequest(endpoint, options = {}) {
   }
 }
 
-// Auto-Login with Seeded Credentials if no valid token
-async function autoLogin() {
+// Auth Modal & Session Management
+let authModalCanClose = true;
+
+function openLoginModal(tab = "login", allowClose = true) {
+  authModalCanClose = allowClose;
+  const closeBtn = document.getElementById("modal-auth-close-btn");
+  if (closeBtn) {
+    closeBtn.style.display = allowClose ? "block" : "none";
+  }
+  switchAuthTab(tab);
+  openModal("modal-auth");
+}
+
+function closeAuthModal() {
+  if (!authModalCanClose && !authToken) {
+    showToast("Por favor inicia sesión o entra en modo Demo para continuar.", "warning");
+    return;
+  }
+  closeModal("modal-auth");
+}
+
+function switchAuthTab(tab) {
+  const loginTab = document.getElementById("auth-tab-login");
+  const regTab = document.getElementById("auth-tab-register");
+  const btnLogin = document.getElementById("tab-btn-login");
+  const btnReg = document.getElementById("tab-btn-register");
+  const loginErr = document.getElementById("login-alert-error");
+  const regErr = document.getElementById("register-alert-error");
+
+  if (loginErr) loginErr.style.display = "none";
+  if (regErr) regErr.style.display = "none";
+
+  if (tab === "login") {
+    if (loginTab) loginTab.style.display = "block";
+    if (regTab) regTab.style.display = "none";
+    if (btnLogin) {
+      btnLogin.style.background = "var(--primary)";
+      btnLogin.style.color = "#fff";
+    }
+    if (btnReg) {
+      btnReg.style.background = "transparent";
+      btnReg.style.color = "var(--text-muted)";
+    }
+  } else {
+    if (loginTab) loginTab.style.display = "none";
+    if (regTab) regTab.style.display = "block";
+    if (btnReg) {
+      btnReg.style.background = "var(--primary)";
+      btnReg.style.color = "#fff";
+    }
+    if (btnLogin) {
+      btnLogin.style.background = "transparent";
+      btnLogin.style.color = "var(--text-muted)";
+    }
+  }
+}
+
+async function submitLoginForm(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const emailInput = document.getElementById("login-email");
+  const pwdInput = document.getElementById("login-password");
+  const errBox = document.getElementById("login-alert-error");
+  const btn = document.getElementById("btn-login-submit");
+
+  const email = emailInput ? emailInput.value.trim() : "";
+  const password = pwdInput ? pwdInput.value : "";
+
+  if (errBox) errBox.style.display = "none";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;"></span> Verificando...`;
+  }
+
   try {
     const res = await fetch("/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || "Correo o contraseña incorrectos");
+    }
+
+    authToken = data.access_token;
+    localStorage.setItem("nuvio_token", authToken);
+    authModalCanClose = true;
+    closeModal("modal-auth");
+
+    await loadCurrentUser();
+    showToast(`Bienvenido de nuevo, ${currentUser ? currentUser.full_name : ''}!`, "success");
+    switchView(activeView || "overview");
+  } catch (err) {
+    if (errBox) {
+      errBox.textContent = `❌ ${err.message}`;
+      errBox.style.display = "block";
+    } else {
+      showToast(err.message, "danger");
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Entrar a mi Cuenta";
+    }
+  }
+}
+
+async function submitRegisterForm(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const orgName = document.getElementById("reg-org-name").value.trim();
+  const fullName = document.getElementById("reg-full-name").value.trim();
+  const email = document.getElementById("reg-email").value.trim();
+  const password = document.getElementById("reg-password").value;
+  const industry = document.getElementById("reg-industry").value;
+  const language = document.getElementById("reg-language").value;
+  const errBox = document.getElementById("register-alert-error");
+  const btn = document.getElementById("btn-register-submit");
+
+  if (errBox) errBox.style.display = "none";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;"></span> Creando Cuenta...`;
+  }
+
+  try {
+    const res = await fetch("/api/v1/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: "admin@nuviogrowth.com",
-        password: "NuvioGrowth2026!"
+        organization_name: orgName,
+        full_name: fullName,
+        email,
+        password,
+        industry,
+        language
       })
     });
-    if (res.ok) {
-      const data = await res.json();
-      authToken = data.access_token;
-      localStorage.setItem("nuvio_token", authToken);
-      await loadCurrentUser();
-      showToast("Sesión iniciada con éxito", "success");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || "Error al crear la cuenta");
     }
-  } catch (e) {
-    console.error("Auto login error:", e);
+
+    authToken = data.access_token;
+    localStorage.setItem("nuvio_token", authToken);
+    if (language) {
+      currentLang = language;
+      localStorage.setItem("nuvio_lang", language);
+    }
+
+    authModalCanClose = true;
+    closeModal("modal-auth");
+
+    await loadCurrentUser();
+    showToast(`¡Cuenta creada con éxito! Bienvenido a Nuvio Growth Suite.`, "success");
+    switchView("overview");
+  } catch (err) {
+    if (errBox) {
+      errBox.textContent = `❌ ${err.message}`;
+      errBox.style.display = "block";
+    } else {
+      showToast(err.message, "danger");
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Crear Organización y Empezar Gratis";
+    }
   }
+}
+
+async function loginDemo() {
+  const emailInput = document.getElementById("login-email");
+  const pwdInput = document.getElementById("login-password");
+  if (emailInput) emailInput.value = "admin@nuviogrowth.com";
+  if (pwdInput) pwdInput.value = "NuvioGrowth2026!";
+
+  await submitLoginForm({ preventDefault: () => {} });
+}
+
+function logout() {
+  if (confirm("¿Estás seguro de que deseas cerrar tu sesión?")) {
+    localStorage.removeItem("nuvio_token");
+    authToken = "";
+    currentUser = null;
+    currentOrg = null;
+    if (currentUserNameEl) currentUserNameEl.textContent = "Sin Sesión";
+    if (currentUserOrgEl) currentUserOrgEl.textContent = "Inicia sesión";
+    showToast("Has cerrado sesión correctamente.", "info");
+    openLoginModal("login", false);
+  }
+}
+
+async function autoLogin() {
+  await loginDemo();
 }
 
 async function loadCurrentUser() {
@@ -1440,11 +1616,15 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Verify or auto-authenticate
+  // Verify or prompt login
   if (!authToken) {
-    await autoLogin();
+    openLoginModal("login", false);
   } else {
-    await loadCurrentUser();
+    try {
+      await loadCurrentUser();
+    } catch (e) {
+      openLoginModal("login", false);
+    }
   }
 
   // Check for OAuth redirect return parameters

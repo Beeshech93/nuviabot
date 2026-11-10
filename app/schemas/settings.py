@@ -88,3 +88,19 @@ class LiveTestResult(BaseModel):
     message: str
     latency_ms: Optional[int] = 0
 
+
+class AuditLogItemResponse(BaseModel):
+    id: int
+    user_name: Optional[str] = "Sistema"
+    action: str
+    resource_type: str
+    resource_id: Optional[str] = ""
+    ip_address: Optional[str] = ""
+    details: dict = {}
+    created_at: str
+
+
+class AuditLogListResponse(BaseModel):
+    total: int
+    items: list[AuditLogItemResponse]
+

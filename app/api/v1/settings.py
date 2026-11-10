@@ -6,9 +6,11 @@ import httpx
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.core.dependencies import get_current_organization, get_current_user, require_admin
-from app.db.models import Organization, User
+from app.db.models import AuditLog, Organization, User
 from app.db.session import get_db
 from app.schemas.settings import (
+    AuditLogItemResponse,
+    AuditLogListResponse,
     LiveIntegrationsResponse,
     LivePlatformStatus,
     LiveTestResult,
@@ -431,3 +433,44 @@ async def test_live_integration(
             )
 
     raise HTTPException(status_code=400, detail=f"Plataforma '{platform}' no soportada para prueba.")
+
+
+@router.get("/audit-logs", response_model=AuditLogListResponse)
+def get_audit_logs(
+    limit: int = 50,
+    current_user: User = Depends(require_admin),
+    org: Organization = Depends(get_current_organization),
+    db: Session = Depends(get_db),
+):
+    """Retrieve security and activity audit logs for the current organization."""
+    logs = (
+        db.query(AuditLog)
+        .filter(AuditLog.organization_id == org.id)
+        .order_by(AuditLog.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+    # Fetch users map for user_name display
+    user_ids = {l.user_id for l in logs if l.user_id}
+    users_map = {}
+    if user_ids:
+        users = db.query(User).filter(User.id.in_(user_ids)).all()
+        users_map = {u.id: u.full_name for u in users}
+
+    items = [
+        AuditLogItemResponse(
+            id=log.id,
+            user_name=users_map.get(log.user_id, "Sistema / Webhook"),
+            action=log.action,
+            resource_type=log.resource_type,
+            resource_id=log.resource_id or "",
+            ip_address=log.ip_address or "",
+            details=log.details or {},
+            created_at=log.created_at.strftime("%Y-%m-%d %H:%M:%S") if log.created_at else "",
+        )
+        for log in logs
+    ]
+
+    return AuditLogListResponse(total=len(items), items=items)
+

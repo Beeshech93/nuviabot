@@ -54,3 +54,21 @@ def test_get_current_user_profile(client, auth_headers):
     assert data["email"] == "admin@nuviogrowth.com"
     assert data["role"] == "agency_admin"
 
+
+def test_login_nonexistent_user(client):
+    response = client.post(
+        "/api/v1/auth/login",
+        json={"email": "nonexistent@user.com", "password": "AnyPassword123!"},
+    )
+    assert response.status_code == 401
+
+
+def test_audit_logs_retrieval(client, auth_headers):
+    response = client.get("/api/v1/settings/audit-logs", headers=auth_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert "total" in data
+    assert "items" in data
+    assert isinstance(data["items"], list)
+
+
