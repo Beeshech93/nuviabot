@@ -1,6 +1,18 @@
 // NUVIO GROWTH BOT - Master Dashboard Application State & Router
 let currentLang = localStorage.getItem("nuvio_lang") || "es";
 let authToken = localStorage.getItem("nuvio_token") || "";
+
+// Purge any cached demo account token from browser storage
+try {
+  if (authToken && authToken.includes(".")) {
+    const payload = JSON.parse(atob(authToken.split(".")[1]));
+    if (payload.email === "admin@nuviogrowth.com") {
+      localStorage.removeItem("nuvio_token");
+      authToken = "";
+    }
+  }
+} catch (e) {}
+
 let currentUser = null;
 let currentOrg = null;
 let activeView = "overview";
@@ -243,8 +255,10 @@ function logout() {
     authToken = "";
     currentUser = null;
     currentOrg = null;
-    if (currentUserNameEl) currentUserNameEl.textContent = "Sin Sesión";
-    if (currentUserOrgEl) currentUserOrgEl.textContent = "Inicia sesión";
+    if (currentUserNameEl) currentUserNameEl.textContent = "Iniciar Sesión";
+    if (currentUserOrgEl) currentUserOrgEl.textContent = "Crear cuenta real";
+    const initialsEl = document.getElementById("currentUserInitials");
+    if (initialsEl) initialsEl.textContent = "👤";
     showToast("Has cerrado sesión correctamente.", "info");
     openLoginModal("login", false);
   }
@@ -257,6 +271,15 @@ async function loadCurrentUser() {
     currentOrg = settingsData;
     if (currentUserNameEl) currentUserNameEl.textContent = currentUser.full_name;
     if (currentUserOrgEl) currentUserOrgEl.textContent = currentOrg.organization_name;
+    const initials = (currentUser.full_name || "Admin")
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+    const initialsEl = document.getElementById("currentUserInitials");
+    if (initialsEl) initialsEl.textContent = initials;
+
     if (currentUser.language && ["es", "en", "ht"].includes(currentUser.language)) {
       currentLang = currentUser.language;
       if (langSelect) langSelect.value = currentLang;

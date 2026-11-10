@@ -760,11 +760,13 @@ textarea.form-control {
     </nav>
 
     <div class="sidebar-footer">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="user-avatar" id="currentUserAvatar" alt="Avatar">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer;" onclick="openLoginModal('login')">
+        <div style="width:36px;height:36px;min-width:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#fff;box-shadow:0 0 10px rgba(99,102,241,0.3);" id="currentUserAvatarWrap">
+          <span id="currentUserInitials">👤</span>
+        </div>
         <div class="user-details" style="min-width:0;flex:1;">
-          <div class="user-name" id="currentUserName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Alex Rivera</div>
-          <div class="user-org" id="currentUserOrg" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Nuvio Growth Agency</div>
+          <div class="user-name" id="currentUserName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Iniciar Sesión</div>
+          <div class="user-org" id="currentUserOrg" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Crear cuenta real</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;">
