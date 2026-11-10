@@ -278,7 +278,8 @@ async function loadSocialAccounts() {
 
 async function startOAuthConnect(platform) {
   try {
-    const res = await apiRequest(`/social/oauth/${platform}/url`);
+    const query = currentActiveClientId ? `?client_id=${currentActiveClientId}` : '';
+    const res = await apiRequest(`/social/oauth/${platform}/url${query}`);
     if (res && res.auth_url) {
       window.location.href = res.auth_url;
     }
@@ -1096,6 +1097,7 @@ async function submitManualConnect(e) {
       method: "POST",
       body: JSON.stringify({
         platform,
+        client_id: currentActiveClientId ? parseInt(currentActiveClientId) : null,
         platform_account_id: `${platform}_${Date.now()}`,
         username,
         display_name: username,
@@ -1445,8 +1447,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     await loadCurrentUser();
   }
 
+  // Check for OAuth redirect return parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("connected") === "true") {
+    const plat = urlParams.get("platform") || "cuenta";
+    showToast(`✅ ${plat.toUpperCase()} conectada exitosamente a tu espacio de trabajo.`, "success");
+    window.history.replaceState({}, document.title, window.location.pathname + (window.location.hash || "#social"));
+  } else if (urlParams.get("error")) {
+    showToast(`❌ Error al conectar: ${decodeURIComponent(urlParams.get("error"))}`, "danger");
+    window.history.replaceState({}, document.title, window.location.pathname + (window.location.hash || "#social"));
+  }
+
   // Handle URL hash router
-  const hash = window.location.hash.replace("#", "") || "overview";
+  const hash = window.location.hash.replace("#", "").split("?")[0] || "overview";
   switchView(hash);
 });
 
