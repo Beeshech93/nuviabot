@@ -1535,26 +1535,32 @@ textarea.form-control {
 
 <!-- MODAL: MANUAL CONNECT -->
 <div class="modal-overlay" id="modal-manual-connect">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="max-width: 500px;">
     <div class="modal-header">
-      <h3 class="modal-title">Conexión de Cuenta</h3>
+      <h3 class="modal-title" id="manual-conn-title">Conexión de Cuenta Social</h3>
       <button class="modal-close" onclick="closeModal('modal-manual-connect')">&times;</button>
     </div>
     <form onsubmit="submitManualConnect(event)">
       <div class="modal-body">
         <input type="hidden" id="manual-conn-platform">
+        
+        <div style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
+          💡 <strong>Conexión Rápida Directa:</strong> Puedes ingresar tu usuario (ej: <code>lajanrapid</code>) para vincular la cuenta a tu espacio de trabajo y comenzar a crear y programar publicaciones de inmediato.
+        </div>
+
         <div class="form-group">
-          <label class="form-label">Nombre de Usuario (@handle)</label>
-          <input type="text" id="manual-conn-user" class="form-control" placeholder="Ej: nuviogrowth_official" required>
+          <label class="form-label">Nombre de Usuario o Página (@handle)</label>
+          <input type="text" id="manual-conn-user" class="form-control" placeholder="Ej: lajanrapid" required value="lajanrapid">
         </div>
         <div class="form-group">
-          <label class="form-label">Token de Acceso Oficial</label>
-          <input type="text" id="manual-conn-token" class="form-control" placeholder="Token de desarrollador o verificación oficial">
+          <label class="form-label">Token de Acceso Oficial (Opcional)</label>
+          <input type="text" id="manual-conn-token" class="form-control" placeholder="Dejar en blanco para usar credencial de la App">
+          <span style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; display: block;">Si se deja en blanco, se vinculará con la Meta App configurada (Lajan Rapid).</span>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="closeModal('modal-manual-connect')">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Conectar</button>
+        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1, #06b6d4); font-weight: 700;">⚡ Conectar Cuenta Ahora</button>
       </div>
     </form>
   </div>
@@ -1871,10 +1877,21 @@ textarea.form-control {
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/js/i18n.js?v=20261110_05"></script>
-<script src="/static/js/charts.js?v=20261110_05"></script>
-<script src="/static/js/app.js?v=20261110_05"></script>
+<script src="/static/js/i18n.js?v=20261110_08"></script>
+<script src="/static/js/charts.js?v=20261110_08"></script>
+<script src="/static/js/app.js?v=20261110_08"></script>
 <script>
+// Global Client & Platform Switchers
+if (typeof window.switchActiveClient === "undefined") {
+  window.switchActiveClient = function(val) {
+    if (typeof currentActiveClientId !== "undefined") {
+      currentActiveClientId = val ? parseInt(val) : null;
+    }
+    if (typeof loadSocialAccounts === "function" && typeof activeView !== "undefined" && activeView === "social") {
+      loadSocialAccounts();
+    }
+  };
+}
 // Global Instant Auth Handlers
 function openLoginModal(tab = "register", allowClose = true) {
   const modal = document.getElementById("modal-auth");

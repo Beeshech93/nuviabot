@@ -16,6 +16,19 @@ try {
 let currentUser = null;
 let currentOrg = null;
 let activeView = "overview";
+let currentActiveClientId = null;
+
+function switchActiveClient(val) {
+  currentActiveClientId = val ? parseInt(val) : null;
+  if (typeof activeView !== "undefined") {
+    if (activeView === "social") {
+      loadSocialAccounts();
+    } else if (activeView === "queue") {
+      loadPublishingQueue();
+    }
+  }
+}
+window.switchActiveClient = switchActiveClient;
 
 // DOM Elements
 const sidebarNav = document.getElementById("sidebarNav");
@@ -519,15 +532,21 @@ async function loadSocialAccounts() {
 
 async function startOAuthConnect(platform) {
   try {
-    const query = currentActiveClientId ? `?client_id=${currentActiveClientId}` : '';
+    showToast(`Conectando con ${platform}... Obteniendo autorización oficial`, "info");
+    const cid = (typeof currentActiveClientId !== "undefined" && currentActiveClientId) ? currentActiveClientId : "";
+    const query = cid ? `?client_id=${cid}` : "";
     const res = await apiRequest(`/social/oauth/${platform}/url${query}`);
     if (res && res.auth_url) {
       window.location.href = res.auth_url;
+    } else {
+      showToast("No se pudo obtener la URL de autorización: " + ((res && (res.detail || res.message)) || "Error de servidor"), "danger");
     }
   } catch (e) {
-    console.error(e);
+    console.error("Error startOAuthConnect:", e);
+    showToast("Error al conectar: " + (e.message || e), "danger");
   }
 }
+window.startOAuthConnect = startOAuthConnect;
 
 async function testAccountConn(id) {
   try {
@@ -535,8 +554,10 @@ async function testAccountConn(id) {
     showToast(res.message, res.success ? "success" : "danger");
   } catch (e) {
     console.error(e);
+    showToast("Error al probar conexión: " + (e.message || e), "danger");
   }
 }
+window.testAccountConn = testAccountConn;
 
 async function syncAccountProfile(id) {
   try {
@@ -545,8 +566,10 @@ async function syncAccountProfile(id) {
     loadSocialAccounts();
   } catch (e) {
     console.error(e);
+    showToast("Error al sincronizar perfil: " + (e.message || e), "danger");
   }
 }
+window.syncAccountProfile = syncAccountProfile;
 
 async function disconnectAccount(id) {
   if (!confirm("¿Deseas desconectar esta cuenta social de Nuvio Growth Bot?")) return;
@@ -556,8 +579,10 @@ async function disconnectAccount(id) {
     loadSocialAccounts();
   } catch (e) {
     console.error(e);
+    showToast("Error al desconectar: " + (e.message || e), "danger");
   }
 }
+window.disconnectAccount = disconnectAccount;
 
 // 3. AI CONTENT STUDIO
 let generatedProposals = [];
@@ -1369,11 +1394,20 @@ async function submitCreatePostForm(e) {
 }
 
 function openManualConnectModal(platform) {
-  document.getElementById("manual-conn-platform").value = platform;
-  document.getElementById("manual-conn-user").value = "";
-  document.getElementById("manual-conn-token").value = "";
+  const platInput = document.getElementById("manual-conn-platform");
+  if (platInput) platInput.value = platform;
+  const titleEl = document.getElementById("manual-conn-title");
+  if (titleEl) {
+    const names = { instagram: "Instagram Business", facebook: "Facebook Pages", tiktok: "TikTok Creator", youtube: "YouTube Channel" };
+    titleEl.textContent = `Conectar ${names[platform] || platform}`;
+  }
+  const userInp = document.getElementById("manual-conn-user");
+  if (userInp) userInp.value = "lajanrapid";
+  const tokenInp = document.getElementById("manual-conn-token");
+  if (tokenInp) tokenInp.value = "";
   openModal("modal-manual-connect");
 }
+window.openManualConnectModal = openManualConnectModal;
 
 async function submitManualConnect(e) {
   if (e) e.preventDefault();
@@ -1382,11 +1416,12 @@ async function submitManualConnect(e) {
   const token = document.getElementById("manual-conn-token").value;
 
   try {
+    const cid = (typeof currentActiveClientId !== "undefined" && currentActiveClientId) ? parseInt(currentActiveClientId) : null;
     await apiRequest("/social/connect-manual", {
       method: "POST",
       body: JSON.stringify({
         platform,
-        client_id: currentActiveClientId ? parseInt(currentActiveClientId) : null,
+        client_id: cid,
         platform_account_id: `${platform}_${Date.now()}`,
         username,
         display_name: username,
@@ -1397,9 +1432,11 @@ async function submitManualConnect(e) {
     showToast("Cuenta conectada con éxito", "success");
     loadSocialAccounts();
   } catch (err) {
-    console.error(err);
+    console.error("submitManualConnect error:", err);
+    showToast("Error al conectar cuenta: " + (err.message || err), "danger");
   }
 }
+window.submitManualConnect = submitManualConnect;
 
 // MEDIA LIBRARY
 let currentMediaFolder = "";
