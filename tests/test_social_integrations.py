@@ -31,11 +31,12 @@ def test_oauth_url_generation(monkeypatch):
     ig_adapter = get_social_adapter("instagram")
 
     # In sandbox mode (no app id configured), returns internal callback simulation
+    monkeypatch.setattr(settings, "META_APP_ID", "")
     ig_sandbox_url = ig_adapter.get_authorization_url(state="test_state_123")
     assert "/api/v1/social/callback/instagram" in ig_sandbox_url
 
     # When Meta App ID is configured, returns official Facebook dialog
-    monkeypatch.setattr(settings, "META_APP_ID", "123456789012345")
+    monkeypatch.setattr(settings, "META_APP_ID", "5449820091910158")
     ig_live_url = ig_adapter.get_authorization_url(state="test_state_123")
     assert "dialog/oauth" in ig_live_url
     assert "instagram_basic" in ig_live_url
