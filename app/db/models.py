@@ -78,6 +78,9 @@ class Organization(Base):
     audit_logs = relationship(
         "AuditLog", back_populates="organization", cascade="all, delete-orphan"
     )
+    ad_campaigns = relationship(
+        "AdCampaign", back_populates="organization", cascade="all, delete-orphan"
+    )
 
 
 class User(Base):
@@ -276,4 +279,40 @@ class AuditLog(Base):
     created_at = Column(DateTime, default=utc_now)
 
     organization = relationship("Organization", back_populates="audit_logs")
+
+
+class AdCampaign(Base):
+    __tablename__ = "ad_campaigns"
+
+    id = Column(Integer, primary_key=True, index=True)
+    organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=False, index=True)
+    campaign_uid = Column(String(100), unique=True, index=True)
+    platform = Column(String(50), nullable=False)  # "facebook" or "tiktok"
+    name = Column(String(255), nullable=False)
+    objective = Column(String(100), default="followers")
+    status = Column(String(50), default="active", index=True)  # "active", "paused", "in_review", "completed"
+
+    budget_usd = Column(Float, default=10.0)
+    daily_budget_usd = Column(Float, default=2.0)
+    duration_days = Column(Integer, default=5)
+    spend_usd = Column(Float, default=0.0)
+
+    target_url = Column(String(500), default="")
+    account_username = Column(String(100), default="")
+    target_countries = Column(String(255), default="Global")
+    target_interests = Column(String(255), default="Negocios, Finanzas, Inversión")
+
+    ad_headline = Column(String(255), default="")
+    ad_text = Column(Text, default="")
+    call_to_action = Column(String(100), default="SEGUIR_PAGINA")
+
+    impressions = Column(Integer, default=0)
+    clicks = Column(Integer, default=0)
+    video_views = Column(Integer, default=0)
+    new_followers = Column(Integer, default=0)
+
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+    organization = relationship("Organization", back_populates="ad_campaigns")
 

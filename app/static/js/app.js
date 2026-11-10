@@ -363,6 +363,7 @@ function switchView(viewName) {
   if (viewName === "overview") loadOverview();
   else if (viewName === "social") loadSocialAccounts();
   else if (viewName === "booster") initBoosterView();
+  else if (viewName === "ads") loadAdCampaigns();
   else if (viewName === "queue") loadPublishingQueue();
   else if (viewName === "approvals") loadApprovals();
   else if (viewName === "media") loadMediaLibrary();
@@ -2096,6 +2097,264 @@ function formatDate(iso) {
   return d.toLocaleString("es-ES", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 
+// ==========================================
+// ADS MANAGER & BOOST CAMPAIGNS (FACEBOOK & TIKTOK)
+// ==========================================
+let currentAdPlatform = "facebook";
+
+function switchAdPlatform(platform) {
+  currentAdPlatform = platform;
+  const fbBtn = document.getElementById("btn-ad-plat-facebook");
+  const ttBtn = document.getElementById("btn-ad-plat-tiktok");
+  const badge = document.getElementById("ad-mockup-badge");
+  const domain = document.getElementById("ad-preview-url-domain");
+  const previewName = document.getElementById("ad-preview-name");
+  const previewAvatar = document.getElementById("ad-preview-avatar");
+  const ctaBtn = document.getElementById("ad-preview-cta-btn");
+  const urlInput = document.getElementById("ad-camp-url");
+
+  if (platform === "facebook") {
+    if (fbBtn) {
+      fbBtn.classList.add("active");
+      fbBtn.style.borderColor = "#3b82f6";
+      fbBtn.style.background = "rgba(59,130,246,0.15)";
+      fbBtn.style.color = "#fff";
+    }
+    if (ttBtn) {
+      ttBtn.classList.remove("active");
+      ttBtn.style.borderColor = "";
+      ttBtn.style.background = "";
+      ttBtn.style.color = "";
+    }
+    if (badge) {
+      badge.textContent = "Facebook Feed Ad";
+      badge.style.background = "rgba(59,130,246,0.15)";
+      badge.style.color = "#38bdf8";
+    }
+    if (domain) domain.textContent = "facebook.com";
+    if (previewName) previewName.textContent = "Lajan Rapid";
+    if (previewAvatar) {
+      previewAvatar.textContent = "L";
+      previewAvatar.style.background = "linear-gradient(135deg,#3b82f6,#2563eb)";
+    }
+    if (ctaBtn) {
+      ctaBtn.style.background = "#3b82f6";
+    }
+    if (urlInput && (!urlInput.value || urlInput.value.includes("tiktok.com"))) {
+      urlInput.value = "https://www.facebook.com/lajanrapid";
+    }
+  } else {
+    // TikTok
+    if (ttBtn) {
+      ttBtn.classList.add("active");
+      ttBtn.style.borderColor = "#00f2fe";
+      ttBtn.style.background = "rgba(0,242,254,0.15)";
+      ttBtn.style.color = "#fff";
+    }
+    if (fbBtn) {
+      fbBtn.classList.remove("active");
+      fbBtn.style.borderColor = "";
+      fbBtn.style.background = "";
+      fbBtn.style.color = "";
+    }
+    if (badge) {
+      badge.textContent = "TikTok In-Feed Ad";
+      badge.style.background = "rgba(0,242,254,0.15)";
+      badge.style.color = "#00f2fe";
+    }
+    if (domain) domain.textContent = "tiktok.com/@lajanrapid";
+    if (previewName) previewName.textContent = "Lajan Rapid";
+    if (previewAvatar) {
+      previewAvatar.textContent = "🎵";
+      previewAvatar.style.background = "linear-gradient(135deg,#ff0050,#00f2fe)";
+    }
+    if (ctaBtn) {
+      ctaBtn.style.background = "linear-gradient(135deg,#ff0050,#00f2fe)";
+    }
+    if (urlInput && (!urlInput.value || urlInput.value.includes("facebook.com"))) {
+      urlInput.value = "https://www.tiktok.com/@lajanrapid";
+    }
+  }
+  updateAdMockup();
+}
+
+function updateAdMockup() {
+  const headline = document.getElementById("ad-camp-headline")?.value || "Página Oficial Lajan Rapid";
+  const text = document.getElementById("ad-camp-text")?.value || "Descubre consejos de crecimiento y finanzas.";
+  const cta = document.getElementById("ad-camp-cta")?.value || "SEGUIR_PAGINA";
+  const budget = parseFloat(document.getElementById("ad-camp-budget")?.value || 25);
+  const username = document.getElementById("ad-camp-username")?.value || "lajanrapid";
+
+  const prevText = document.getElementById("ad-preview-text");
+  const prevHeadline = document.getElementById("ad-preview-headline");
+  const prevCta = document.getElementById("ad-preview-cta-btn");
+  const projImpr = document.getElementById("ad-proj-impressions");
+  const projFollowers = document.getElementById("ad-proj-followers");
+
+  if (prevText) prevText.textContent = text;
+  if (prevHeadline) prevHeadline.textContent = headline;
+
+  const ctaMap = {
+    "SEGUIR_PAGINA": "Seguir",
+    "ENVIAR_MENSAJE": "Enviar Mensaje",
+    "VER_VIDEO": "Ver Video",
+    "MAS_INFORMACION": "Más Información",
+    "CONTACTAR": "Contactar"
+  };
+  if (prevCta) prevCta.textContent = ctaMap[cta] || "Seguir";
+
+  const minImpr = Math.round(budget * 650);
+  const maxImpr = Math.round(budget * 1300);
+  const minFoll = Math.round(budget * 7.2);
+  const maxFoll = Math.round(budget * 25.6);
+
+  if (projImpr) projImpr.textContent = `${minImpr.toLocaleString()} - ${maxImpr.toLocaleString()}`;
+  if (projFollowers) projFollowers.textContent = `+${minFoll.toLocaleString()} a +${maxFoll.toLocaleString()}`;
+}
+
+function setAdBudget(amount, btn) {
+  const inp = document.getElementById("ad-camp-budget");
+  if (inp) inp.value = amount;
+  if (btn) {
+    document.querySelectorAll(".ad-btn-budget").forEach(b => {
+      b.classList.remove("active");
+      b.style.borderColor = "";
+      b.style.color = "";
+      b.style.background = "";
+    });
+    btn.classList.add("active");
+    btn.style.borderColor = "#3b82f6";
+    btn.style.color = "#fff";
+    btn.style.background = "rgba(59,130,246,0.15)";
+  }
+  updateAdMockup();
+}
+
+function scrollToCreateAd(platform) {
+  if (platform) switchAdPlatform(platform);
+  const target = document.getElementById("create-ad-section");
+  if (target) {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+async function submitAdCampaign() {
+  const btn = document.getElementById("btn-submit-ad-campaign");
+  const name = document.getElementById("ad-camp-name")?.value.trim() || "Campaña Oficial Lajan Rapid";
+  const objective = document.getElementById("ad-camp-objective")?.value || "followers";
+  const username = document.getElementById("ad-camp-username")?.value.trim() || "lajanrapid";
+  const targetUrl = document.getElementById("ad-camp-url")?.value.trim() || "https://www.facebook.com/lajanrapid";
+  const headline = document.getElementById("ad-camp-headline")?.value.trim() || "Página Oficial Lajan Rapid";
+  const text = document.getElementById("ad-camp-text")?.value.trim() || "Crecimiento asegurado";
+  const cta = document.getElementById("ad-camp-cta")?.value || "SEGUIR_PAGINA";
+  const budget = parseFloat(document.getElementById("ad-camp-budget")?.value || 25);
+  const duration = parseInt(document.getElementById("ad-camp-duration")?.value || 7);
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:8px;"></span> Desplegando en ${currentAdPlatform.toUpperCase()} Ads...`;
+  }
+
+  try {
+    const payload = {
+      platform: currentAdPlatform,
+      name,
+      objective,
+      target_url: targetUrl,
+      account_username: username,
+      budget_usd: budget,
+      duration_days: duration,
+      target_countries: "Global",
+      target_interests: "Negocios, Finanzas, Inversión, Crecimiento",
+      ad_headline: headline,
+      ad_text: text,
+      call_to_action: cta
+    };
+
+    const res = await apiRequest("/ads/campaigns", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    showToast(`🚀 ¡Campaña publicitaria activada en ${currentAdPlatform.toUpperCase()} Ads!`, "success");
+    await loadAdCampaigns();
+
+    const tableEl = document.getElementById("ads-campaigns-table-body");
+    if (tableEl) tableEl.scrollIntoView({ behavior: "smooth" });
+  } catch (err) {
+    console.error("submitAdCampaign error:", err);
+    showToast("Error al crear campaña publicitaria: " + (err.message || err), "danger");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `🚀 Lanzar Campaña Publicitaria Oficial`;
+    }
+  }
+}
+
+async function loadAdCampaigns() {
+  const tbody = document.getElementById("ads-campaigns-table-body");
+  if (!tbody) return;
+
+  try {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-dim);">Cargando campañas publicitarias...</td></tr>`;
+    const campaigns = await apiRequest("/ads/campaigns");
+
+    if (!campaigns || !campaigns.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text-dim);">No hay campañas publicitarias aún. Configura una arriba para comenzar a promocionar.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = campaigns.map(c => {
+      const isFb = c.platform === "facebook";
+      const platBadge = isFb
+        ? `<span class="platform-pill pill-facebook">Facebook Ads</span>`
+        : `<span class="platform-pill pill-tiktok">TikTok Ads</span>`;
+
+      const statusBadge = c.status === "ACTIVE"
+        ? `<span class="status-badge status-published">● Activa</span>`
+        : `<span class="status-badge status-draft">Pausada</span>`;
+
+      return `
+        <tr>
+          <td>
+            <div style="font-weight:700;color:#fff;">${escapeHtml(c.name)}</div>
+            <div style="font-size:0.72rem;color:var(--text-dim);">${escapeHtml(c.campaign_uid)} • ${escapeHtml(c.ad_headline || '')}</div>
+          </td>
+          <td>${platBadge}</td>
+          <td><span style="text-transform:capitalize;font-size:0.8rem;color:#cbd5e1;">${escapeHtml(c.objective)}</span></td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="font-weight:700;color:#fff;">$${c.spend_usd.toFixed(2)}</div>
+            <div style="font-size:0.72rem;color:var(--text-dim);">de $${c.budget_usd.toFixed(2)} (${c.duration_days}d)</div>
+          </td>
+          <td style="font-weight:700;color:#38bdf8;">${(c.impressions || 0).toLocaleString()}</td>
+          <td style="font-weight:700;color:#10b981;">+${(c.new_followers || 0).toLocaleString()}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="toggleAdCampaign(${c.id})" style="font-size:0.75rem;padding:4px 8px;">
+              ${c.status === "ACTIVE" ? "⏸ Pausar" : "▶ Reanudar"}
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (err) {
+    console.error("loadAdCampaigns error:", err);
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:#ef4444;">Error al cargar campañas: ${escapeHtml(err.message || err)}</td></tr>`;
+  }
+}
+
+async function toggleAdCampaign(id) {
+  try {
+    const res = await apiRequest(`/ads/campaigns/${id}/toggle`, { method: "POST" });
+    showToast(`Campaña ${res.status === "ACTIVE" ? "activada" : "pausada"} exitosamente`, "success");
+    await loadAdCampaigns();
+  } catch (err) {
+    console.error("toggleAdCampaign error:", err);
+    showToast("Error al alternar estado: " + (err.message || err), "danger");
+  }
+}
+
 // Initial Bootstrap
 window.addEventListener("DOMContentLoaded", async () => {
   // Mobile menu toggle
@@ -2115,6 +2374,15 @@ window.addEventListener("DOMContentLoaded", async () => {
       location.reload();
     });
   }
+
+  // Ads Campaign Functions
+  window.switchAdPlatform = switchAdPlatform;
+  window.updateAdMockup = updateAdMockup;
+  window.setAdBudget = setAdBudget;
+  window.scrollToCreateAd = scrollToCreateAd;
+  window.submitAdCampaign = submitAdCampaign;
+  window.loadAdCampaigns = loadAdCampaigns;
+  window.toggleAdCampaign = toggleAdCampaign;
 
   // Nav item click listener
   document.querySelectorAll(".nav-item").forEach(item => {
