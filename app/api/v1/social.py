@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_organization, get_current_user, require_admin
 from app.core.exceptions import NuvioException, ResourceNotFoundException
 from app.core.security import decrypt_token, encrypt_token
-from app.db.models import Organization, SocialAccount, User
+from app.db.models import AuditLog, Organization, SocialAccount, User
 from app.db.session import get_db
 from app.schemas.social import (
     ConnectManualAccountRequest,
@@ -158,6 +158,15 @@ async def oauth_callback(
         )
         db.add(account)
 
+    audit = AuditLog(
+        organization_id=org.id,
+        user_id=None,
+        action="social_account_connected",
+        resource_type="social_account",
+        resource_id=platform_account_id,
+        details={"platform": platform, "username": username},
+    )
+    db.add(audit)
     db.commit()
     redirect_target = f"/#social?connected=true&platform={platform}"
     if target_client_id:
@@ -226,7 +235,18 @@ def disconnect_account(
     if not account:
         raise ResourceNotFoundException("SocialAccount")
 
+    platform_name = account.platform
+    username = account.username
     db.delete(account)
+    audit = AuditLog(
+        organization_id=org.id,
+        user_id=current_user.id,
+        action="social_account_disconnected",
+        resource_type="social_account",
+        resource_id=str(account_id),
+        details={"platform": platform_name, "username": username},
+    )
+    db.add(audit)
     db.commit()
     return {"message": "Account disconnected successfully."}
 
