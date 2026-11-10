@@ -18,7 +18,7 @@ class BillingService:
             "code": "free",
             "price_monthly": 0.0,
             "price_annual": 0.0,
-            "max_social_accounts": 1,
+            "max_social_accounts": 10,
             "max_posts_per_month": 15,
             "max_ai_credits": 25,
             "max_clients": 1,
@@ -168,6 +168,7 @@ class BillingService:
     @staticmethod
     def check_can_add_social_account(db: Session, org: Organization):
         plan = org.plan or db.query(Plan).filter(Plan.code == "free").first()
+        max_accounts = max(getattr(plan, "max_social_accounts", 10), 10)
         current_count = (
             db.query(SocialAccount)
             .filter(
@@ -176,9 +177,9 @@ class BillingService:
             )
             .count()
         )
-        if current_count >= plan.max_social_accounts:
+        if current_count >= max_accounts:
             raise PlanLimitExceededException(
-                "Social Accounts", plan.max_social_accounts
+                "Social Accounts", max_accounts
             )
 
     @staticmethod
