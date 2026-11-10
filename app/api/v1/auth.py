@@ -31,7 +31,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     if existing:
         raise NuvioException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An account with this email address already exists.",
+            detail="Ya existe una cuenta registrada con este correo electrónico.",
         )
 
     # Ensure plans exist

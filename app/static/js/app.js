@@ -150,6 +150,19 @@ function switchAuthTab(tab) {
       btnLogin.style.background = "transparent";
       btnLogin.style.color = "var(--text-muted)";
     }
+    // Auto-copy email and password from login form if already typed
+    const loginEmail = document.getElementById("login-email");
+    const regEmail = document.getElementById("reg-email");
+    if (loginEmail && regEmail && loginEmail.value.trim() && !regEmail.value.trim()) {
+      regEmail.value = loginEmail.value.trim();
+    }
+    const loginPwd = document.getElementById("login-password");
+    const regPwd = document.getElementById("reg-password");
+    if (loginPwd && regPwd && loginPwd.value && !regPwd.value) {
+      regPwd.value = loginPwd.value;
+    }
+    const orgInput = document.getElementById("reg-org-name");
+    if (orgInput) orgInput.focus();
   }
 }
 
