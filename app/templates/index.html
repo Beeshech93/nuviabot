@@ -1415,6 +1415,41 @@ textarea.form-control {
             </div>
           </div>
         </div>
+
+        <!-- Historial de Auditoría y Seguridad -->
+        <div class="card-panel" style="margin-top: 24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div>
+              <h3 style="font-size:1.05rem;font-weight:700;">Historial de Auditoría & Seguridad (Audit Logs)</h3>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">Trazabilidad completa de inicios de sesión, cambios de credenciales, aprobaciones y webhooks.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">
+              🔄 Actualizar Registro
+            </button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="table-custom" style="width:100%;font-size:0.82rem;">
+              <thead>
+                <tr>
+                  <th style="padding:10px 14px;">Fecha y Hora</th>
+                  <th style="padding:10px 14px;">Usuario / Origen</th>
+                  <th style="padding:10px 14px;">Acción</th>
+                  <th style="padding:10px 14px;">Recurso</th>
+                  <th style="padding:10px 14px;">Dirección IP</th>
+                  <th style="padding:10px 14px;">Detalles</th>
+                </tr>
+              </thead>
+              <tbody id="table-audit-logs-body">
+                <tr>
+                  <td colspan="6" style="text-align:center;padding:24px;color:var(--text-dim);">
+                    Cargando registros de auditoría...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
     </div>

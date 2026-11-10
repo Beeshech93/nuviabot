@@ -35,14 +35,28 @@ async def background_scheduler():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Ensure DB schema, directories, seed data, and start scheduler
-    Base.metadata.create_all(bind=engine)
-    MediaService.ensure_upload_dir()
-
-    db = SessionLocal()
     try:
-        seed_database(db)
-    finally:
-        db.close()
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"⚠️ Warning during Base.metadata.create_all: {e}")
+
+    try:
+        MediaService.ensure_upload_dir()
+    except Exception as e:
+        print(f"⚠️ Warning during MediaService.ensure_upload_dir: {e}")
+
+    try:
+        db = SessionLocal()
+        try:
+            # Check if seeded to avoid repeated heavy work on serverless cold starts
+            from app.db.models import User
+            existing_user = db.query(User).filter(User.email == "admin@nuviogrowth.com").first()
+            if not existing_user:
+                seed_database(db)
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"⚠️ Warning during seed_database: {e}")
 
     # Start background scheduler only in persistent server environments (not in serverless Vercel)
     global scheduler_task
@@ -53,7 +67,10 @@ async def lifespan(app: FastAPI):
 
     # Shutdown
     if scheduler_task:
-        scheduler_task.cancel()
+        try:
+            scheduler_task.cancel()
+        except Exception:
+            pass
 
 
 app = FastAPI(
@@ -100,14 +117,23 @@ def health_check():
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_dashboard(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
-            "project_name": settings.PROJECT_NAME,
-            "version": settings.VERSION,
-        },
-    )
+    try:
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "project_name": settings.PROJECT_NAME,
+                "version": settings.VERSION,
+            },
+        )
+    except Exception:
+        # Fallback if templates directory path resolution had any issue in serverless
+        html_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+        if os.path.exists(html_path):
+            with open(html_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return HTMLResponse(content=content)
+        raise
 
 
 @app.get("/privacy-policy", response_class=HTMLResponse)

@@ -9,7 +9,7 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
-from app.db.models import Organization, Plan, User
+from app.db.models import AuditLog, Organization, Plan, User
 from app.db.session import get_db
 from app.schemas.auth import (
     LoginRequest,
@@ -69,6 +69,18 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
+    # Record registration audit log
+    audit = AuditLog(
+        organization_id=org.id,
+        user_id=user.id,
+        action="user_registered",
+        resource_type="organization",
+        resource_id=str(org.id),
+        details={"email": user.email, "org_name": org.name},
+    )
+    db.add(audit)
+    db.commit()
+
     access_token = create_access_token(
         subject=user.id,
         claims={"org_id": org.id, "role": user.role, "email": user.email},
@@ -86,6 +98,18 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
 
     if not user.is_active:
         raise UnauthorizedException("Account is disabled. Please contact your administrator.")
+
+    # Record login audit log
+    audit = AuditLog(
+        organization_id=user.organization_id,
+        user_id=user.id,
+        action="user_login",
+        resource_type="auth",
+        resource_id=str(user.id),
+        details={"email": user.email},
+    )
+    db.add(audit)
+    db.commit()
 
     access_token = create_access_token(
         subject=user.id,

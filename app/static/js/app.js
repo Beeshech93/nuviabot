@@ -1113,10 +1113,52 @@ async function loadSettings() {
     } catch (err) {
       console.warn("Could not load /settings/integrations:", err);
     }
+
+    // Load Audit Logs
+    await loadAuditLogs();
   } catch (e) {
     console.error(e);
   }
 }
+
+async function loadAuditLogs() {
+  const tbody = document.getElementById("table-audit-logs-body");
+  if (!tbody) return;
+
+  try {
+    const res = await apiRequest("/settings/audit-logs?limit=50");
+    if (!res || !res.items || res.items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center;padding:24px;color:var(--text-dim);">
+            No hay registros de auditoría recientes para esta organización.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = res.items.map(item => `
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:10px 14px;color:var(--text-dim);font-size:0.78rem;white-space:nowrap;">${item.created_at || 'Reciente'}</td>
+        <td style="padding:10px 14px;font-weight:600;">${item.user_name || 'Sistema'}</td>
+        <td style="padding:10px 14px;"><span class="status-badge" style="background:rgba(99,102,241,0.15);color:#818cf8;">${item.action}</span></td>
+        <td style="padding:10px 14px;color:var(--text-muted);">${item.resource_type} ${item.resource_id ? `#${item.resource_id}` : ''}</td>
+        <td style="padding:10px 14px;font-family:monospace;font-size:0.75rem;color:var(--text-dim);">${item.ip_address || '127.0.0.1'}</td>
+        <td style="padding:10px 14px;font-size:0.75rem;color:var(--text-muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${JSON.stringify(item.details || {})}</td>
+      </tr>
+    `).join("");
+  } catch (err) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;padding:20px;color:var(--danger);">
+          Error al cargar registros: ${err.message}
+        </td>
+      </tr>
+    `;
+  }
+}
+
 
 async function saveLiveIntegrationsForm(e) {
   if (e) e.preventDefault();
