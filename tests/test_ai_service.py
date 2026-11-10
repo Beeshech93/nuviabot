@@ -65,3 +65,17 @@ async def test_ai_hashtags_generation():
     assert len(result.hashtags) >= 5
     assert any("ModaSostenible" in h for h in result.hashtags)
 
+
+@pytest.mark.asyncio
+async def test_ai_chat_assistant():
+    # Spanish chat test
+    res_es = await ai_service.chat_assistant("¿Cómo hago un buen video para TikTok?", language="es")
+    assert "TikTok" in res_es.reply
+    assert len(res_es.suggested_actions) > 0
+
+    # Haitian Creole chat test
+    res_ht = await ai_service.chat_assistant("Kijan pou mwen ogmante entèraksyon sou TikTok?", language="ht")
+    assert "TikTok" in res_ht.reply
+    assert "segonn" in res_ht.reply.lower() or "estrateji" in res_ht.reply.lower()
+
+

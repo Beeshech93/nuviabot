@@ -1679,7 +1679,7 @@ function sendAssistantPrompt(text) {
   sendAssistantMessage();
 }
 
-function sendAssistantMessage() {
+async function sendAssistantMessage() {
   const inp = document.getElementById("assistant-input");
   const msg = inp.value.trim();
   if (!msg) return;
@@ -1697,27 +1697,62 @@ function sendAssistantMessage() {
   log.appendChild(userMsg);
   inp.value = "";
 
-  setTimeout(() => {
+  // Typing indicator
+  const typingMsg = document.createElement("div");
+  typingMsg.style.background = "var(--bg-card)";
+  typingMsg.style.border = "1px solid var(--border)";
+  typingMsg.style.padding = "10px 14px";
+  typingMsg.style.borderRadius = "8px";
+  typingMsg.style.fontSize = "0.85rem";
+  typingMsg.style.color = "var(--text-dim)";
+  typingMsg.textContent = "🧠 Nuvio AI está analizando y generando recomendaciones...";
+  log.appendChild(typingMsg);
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    const res = await apiRequest("/ai/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        message: msg,
+        language: typeof currentLang !== "undefined" ? currentLang : "es"
+      })
+    });
+    log.removeChild(typingMsg);
+
     const aiMsg = document.createElement("div");
     aiMsg.style.background = "var(--bg-card)";
     aiMsg.style.border = "1px solid var(--border)";
-    aiMsg.style.padding = "12px 16px";
+    aiMsg.style.padding = "14px 18px";
     aiMsg.style.borderRadius = "8px";
     aiMsg.style.maxWidth = "85%";
     aiMsg.style.fontSize = "0.85rem";
     aiMsg.style.lineHeight = "1.6";
 
-    if (msg.includes("TikTok")) {
-      aiMsg.innerHTML = "💡 <strong>Ganchos Virales de TikTok:</strong><br>1. 'Nadie en [tu industria] te dirá esto porque pierden dinero...'<br>2. 'Si todavía estás haciendo [error común], mira esto antes de que sea tarde.'<br>3. 'Esta herramienta de 5 minutos me ahorró 20 horas de trabajo esta semana.'<br><br>👉 Mantén los primeros 2 segundos con movimiento visual y texto legible.";
-    } else if (msg.includes("Instagram")) {
-      aiMsg.innerHTML = "📊 <strong>Pilares de Engagement para Instagram:</strong><br>• Lunes: Carrusel educativo con problema y solución paso a paso.<br>• Miércoles: Reel de 15 segundos con gancho fuerte y llamado a comentar.<br>• Viernes: Historia o caso de éxito real con antes y después.<br><br>💡 Responde a cada comentario en los primeros 45 minutos tras publicar.";
-    } else {
-      aiMsg.innerHTML = "🚀 <strong>Consejo Estratégico Nuvio:</strong> Para maximizar el algoritmo, programa publicaciones consistentes en tu horario de mayor audiencia activa (entre 12:00 PM y 3:00 PM o 7:00 PM y 9:00 PM en tu zona horaria) y pide siempre a tu equipo revisar en la sección de Aprobaciones.";
-    }
+    // Format newlines and markdown-style bold
+    const formatted = (res.reply || "")
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+
+    aiMsg.innerHTML = `
+      <div>${formatted}</div>
+      <div style="margin-top:12px;display:flex;gap:8px;border-top:1px solid var(--border);padding-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="copyTextToClipboard(${JSON.stringify(res.reply)})">📋 Copiar Respuesta</button>
+        <button class="btn btn-primary btn-sm" onclick="switchView('studio')">✍️ Ir al Content Studio</button>
+      </div>
+    `;
 
     log.appendChild(aiMsg);
     log.scrollTop = log.scrollHeight;
-  }, 400);
+  } catch (err) {
+    if (typingMsg.parentNode) log.removeChild(typingMsg);
+    showToast("Error en Asistente AI: " + err.message, "danger");
+  }
+}
+
+function copyTextToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("Texto copiado al portapapeles", "success");
+  });
 }
 
 async function submitCreateClient(e) {

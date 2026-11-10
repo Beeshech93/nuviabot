@@ -458,6 +458,129 @@ Format output as a JSON object with this key:
             strategy_summary=f"Balanced 7-day multi-pillar schedule designed to build audience trust, authority, and conversions for {business_name}.",
         )
 
+    async def chat_assistant(self, message: str, language: str = "es", context: Optional[dict] = None) -> AIChatResponse:
+        """Conversational AI Growth Consultant for social media strategy and execution."""
+        from app.schemas.ai import AIChatResponse
+
+        lang = language.lower() if language else "es"
+
+        if self.client:
+            try:
+                system_prompt = (
+                    "You are Nuvio AI, an elite Senior Social Media Growth Consultant & Strategist. "
+                    "You provide sharp, tactical, high-converting social media advice, hooks, content calendars, "
+                    f"and growth strategies in {lang.upper()} (es = Spanish, en = English, ht = Haitian Creole). "
+                    "Keep answers punchy, actionable, with emojis and bullet points."
+                )
+                response = await self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": message},
+                    ],
+                    temperature=0.7,
+                    max_tokens=600,
+                )
+                reply_text = response.choices[0].message.content
+                return AIChatResponse(
+                    reply=reply_text,
+                    suggested_actions=[
+                        {"label": "Copiar al Studio", "action": "copy_studio"},
+                        {"label": "Crear Borrador", "action": "create_draft"},
+                    ],
+                    language=lang,
+                )
+            except Exception:
+                pass
+
+        # Fallback intelligent conversational responses
+        msg_lower = message.lower()
+        if "tiktok" in msg_lower:
+            if lang == "ht":
+                reply = (
+                    "💡 **Estrateji Viral pou TikTok (Nuvio Growth):**\n\n"
+                    "1. **Premye 2 segonn (Hook)**: Kòmanse dirèkteman ak yon sipriz oswa yon erè komen: 'Pa janm fè erè sa a ankò...'\n"
+                    "2. **Estrikti**: Pwoblèm ➔ Solisyon rapid ➔ Rele pou aksyon (CTA).\n"
+                    "3. **Tandans**: Itilize son ki popilè nan 48 èdtan ki sot pase yo.\n"
+                    "4. **Konsistans**: Pibliye 1 a 2 videyo pa jou nan lè odyans lan pi aktif."
+                )
+            elif lang == "en":
+                reply = (
+                    "💡 **Viral TikTok Growth Playbook (Nuvio Growth):**\n\n"
+                    "1. **The 2-Second Hook**: Never start with an intro. Hook immediately: 'The biggest mistake people make in [niche]...'\n"
+                    "2. **Pacing**: Cut every pause and add readable on-screen captions.\n"
+                    "3. **Trend Jacking**: Pair original educational insight with trending 48-hour audio.\n"
+                    "4. **Engagement Loop**: Ask a polarizing question in the comments to trigger debates."
+                )
+            else:
+                reply = (
+                    "💡 **Estrategia Viral para TikTok (Nuvio Growth):**\n\n"
+                    "1. **El Gancho de los 2 Segundos**: Empieza sin rodeos: 'Nadie en tu industria te dirá esto porque pierden dinero...'\n"
+                    "2. **Ritmo Dinámico**: Elimina pausas y añade subtítulos grandes de alto contraste.\n"
+                    "3. **Estructura 3 Actos**: Problema agudo ➔ Solución práctica ➔ Llamado a la acción (CTA) claro.\n"
+                    "4. **Algoritmo**: Responde a los primeros 5 comentarios con un nuevo video de respuesta."
+                )
+        elif "instagram" in msg_lower:
+            if lang == "ht":
+                reply = (
+                    "📊 **Estrateji pou Instagram (Reels & Carruseles):**\n\n"
+                    "• **Lendi**: Karousèl edikatif ak 5 konsèy pratik.\n"
+                    "• **Mèkredi**: Reel 15 segonn ak yon demonstrasyon rapid.\n"
+                    "• **Vandredi**: Pataje yon temwayaj oswa yon rezilta reyèl.\n"
+                    "💡 Reponn tout kòmantè nan premye 30 minit apre piblikasyon an."
+                )
+            elif lang == "en":
+                reply = (
+                    "📊 **Instagram Engagement Blueprint:**\n\n"
+                    "• **Carousels**: Best for saves and shares (educational 5-7 slides with a problem/solution).\n"
+                    "• **Reels (9:16)**: Best for non-follower reach. Keep under 20 seconds.\n"
+                    "• **Stories**: Drive daily conversions with interactive polls, questions, and DM prompts.\n"
+                    "💡 Golden Rule: Respond to every comment in the first 45 minutes after publishing."
+                )
+            else:
+                reply = (
+                    "📊 **Pilares de Crecimiento para Instagram:**\n\n"
+                    "• **Carruseles Educativos (4 a 7 láminas)**: Maximizan guardados y compartidos.\n"
+                    "• **Reels de 15 segundos**: Ideales para llegar a nuevas audiencias que no te siguen.\n"
+                    "• **Historias Diarias**: Generan ventas y cercanía mediante encuestas y stickers de preguntas.\n"
+                    "💡 Regla de Oro: Responde a cada comentario en los primeros 45 minutos tras publicar."
+                )
+        else:
+            if lang == "ht":
+                reply = (
+                    f"🚀 **Konsèy Estratejik Nuvio:**\n\n"
+                    f"Pou reponn ak kesyon w lan sou '{message[:50]}...':\n\n"
+                    "1. **Odyans sib**: Defini egzakteman kiyès w ap pale avè l anvan w ekri.\n"
+                    "2. **Orè Piblikasyon**: Pwograme kontni ant 12:00 PM ak 3:00 PM oswa 7:00 PM ak 9:00 PM nan zòn lè w la.\n"
+                    "3. **Kalite sou Kantite**: Yon piblikasyon ki pote vrè valè pi efikas pase 10 posts san enterè."
+                )
+            elif lang == "en":
+                reply = (
+                    f"🚀 **Nuvio Strategic Recommendation:**\n\n"
+                    f"Regarding '{message[:50]}...':\n\n"
+                    "1. **Clear Value Proposition**: Highlight the immediate transformation your product or service delivers.\n"
+                    "2. **Optimal Scheduling**: Post between 12:00 PM - 3:00 PM and 7:00 PM - 9:00 PM in your target audience's timezone.\n"
+                    "3. **Human Approval Workflow**: Always send drafts to the approval queue for quality control before publishing."
+                )
+            else:
+                reply = (
+                    f"🚀 **Recomendación Estratégica Nuvio:**\n\n"
+                    f"Para potenciar tu estrategia sobre '{message[:50]}...':\n\n"
+                    "1. **Foco en el Problema del Cliente**: El 80% de tus publicaciones deben resolver dudas frecuentes o dolores reales de tu audiencia.\n"
+                    "2. **Horarios de Alto Impacto**: Programa entre las 12:00 PM - 3:00 PM y 7:00 PM - 9:00 PM en tu zona horaria configurada.\n"
+                    "3. **Aprobación Humana**: Revisa siempre el contenido en el módulo de Aprobaciones antes de su publicación definitiva."
+                )
+
+        return AIChatResponse(
+            reply=reply,
+            suggested_actions=[
+                {"label": "Copiar al Studio", "action": "copy_studio"},
+                {"label": "Crear Publicación", "action": "create_draft"},
+            ],
+            language=lang,
+        )
+
 
 ai_service = AIService()
+
 

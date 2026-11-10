@@ -88,3 +88,15 @@ class AICalendarIdeaResponse(BaseModel):
     days_plan: List[AICalendarDayPlan]
     strategy_summary: str
 
+
+class AIChatRequest(BaseModel):
+    message: str
+    language: Optional[str] = "es"  # es, en, ht
+    context: Optional[dict] = None
+
+
+class AIChatResponse(BaseModel):
+    reply: str
+    suggested_actions: List[dict] = []
+    language: str
+

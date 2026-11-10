@@ -6,6 +6,8 @@ from app.db.session import get_db
 from app.schemas.ai import (
     AICalendarIdeaRequest,
     AICalendarIdeaResponse,
+    AIChatRequest,
+    AIChatResponse,
     AIGenerateRequest,
     AIGenerateResponse,
     AIHashtagRequest,
@@ -99,6 +101,25 @@ async def generate_calendar_ideas(
         language=req.language,
     )
     org.ai_credits_used_this_month = (org.ai_credits_used_this_month or 0) + 2
+    db.commit()
+    return result
+
+
+@router.post("/chat", response_model=AIChatResponse)
+async def chat_assistant(
+    req: AIChatRequest,
+    current_user: User = Depends(get_current_user),
+    org: Organization = Depends(get_current_organization),
+    db: Session = Depends(get_db),
+):
+    """Conversational AI Growth Consultant for social media strategy and execution."""
+    BillingService.check_can_use_ai_credits(db, org, credits=1)
+    result = await ai_service.chat_assistant(
+        message=req.message,
+        language=req.language or current_user.language or org.default_language or "es",
+        context=req.context,
+    )
+    org.ai_credits_used_this_month = (org.ai_credits_used_this_month or 0) + 1
     db.commit()
     return result
 
