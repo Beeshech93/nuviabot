@@ -40,6 +40,9 @@ def get_oauth_url(
     current_user: User = Depends(get_current_user),
     org: Organization = Depends(get_current_organization),
 ):
+    if platform == "meta":
+        platform = "facebook"
+
     adapter = get_social_adapter(platform)
     target_cid = client_id if client_id is not None else 0
     state = f"{org.id}:{current_user.id}:{target_cid}:{uuid.uuid4().hex[:12]}"
@@ -66,6 +69,9 @@ async def oauth_callback(
 
     if not code:
         return RedirectResponse(url="/#social?error=No_authorization_code_provided")
+
+    if platform == "meta":
+        platform = "facebook"
 
     adapter = get_social_adapter(platform)
 
@@ -132,6 +138,7 @@ async def oauth_callback(
             "posts_count": 24,
         }
 
+    effective_token = profile.get("page_access_token") or access_token
     platform_account_id = str(profile.get("id") or f"{platform}_{uuid.uuid4().hex[:8]}")
     username = profile.get("username") or f"{platform}_user"
 
@@ -148,7 +155,7 @@ async def oauth_callback(
 
     if existing:
         existing.client_id = target_client_id or existing.client_id
-        existing.encrypted_access_token = encrypt_token(access_token)
+        existing.encrypted_access_token = encrypt_token(effective_token)
         if refresh_token:
             existing.encrypted_refresh_token = encrypt_token(refresh_token)
         existing.status = "connected"
@@ -164,7 +171,7 @@ async def oauth_callback(
             username=username,
             display_name=profile.get("display_name", username),
             profile_picture_url=profile.get("profile_picture_url", ""),
-            encrypted_access_token=encrypt_token(access_token),
+            encrypted_access_token=encrypt_token(effective_token),
             encrypted_refresh_token=encrypt_token(refresh_token),
             status="connected",
             followers_count=profile.get("followers_count", 0),

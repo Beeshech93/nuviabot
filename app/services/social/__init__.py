@@ -8,6 +8,7 @@ from app.services.social.youtube import YouTubeAdapter
 ADAPTERS: Dict[str, SocialAdapter] = {
     "instagram": InstagramAdapter(),
     "facebook": FacebookAdapter(),
+    "meta": FacebookAdapter(),
     "tiktok": TikTokAdapter(),
     "youtube": YouTubeAdapter(),
 }

@@ -91,7 +91,7 @@ class FacebookAdapter(SocialAdapter):
         async with httpx.AsyncClient() as client:
             resp = await client.get(
                 f"{self.BASE_GRAPH_URL}/me/accounts",
-                params={"fields": "id,name,fan_count,picture", "access_token": access_token},
+                params={"fields": "id,name,fan_count,picture,access_token", "access_token": access_token},
                 timeout=15.0,
             )
             data = resp.json()
@@ -108,6 +108,7 @@ class FacebookAdapter(SocialAdapter):
                     "followers_count": page.get("fan_count", 0),
                     "following_count": 0,
                     "posts_count": 0,
+                    "page_access_token": page.get("access_token"),
                 }
 
             return {
