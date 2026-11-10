@@ -5,6 +5,7 @@ from app.config import settings
 from app.schemas.ai import (
     AICalendarDayPlan,
     AICalendarIdeaResponse,
+    AIChatResponse,
     AIGenerateRequest,
     AIGenerateResponse,
     AIHashtagResponse,
