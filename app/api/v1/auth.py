@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -20,21 +21,39 @@ from app.schemas.auth import (
     UserUpdate,
 )
 from app.services.billing_service import BillingService
+from app.services.supabase_service import supabase_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=Token)
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
-    # Check if user already exists
-    existing = db.query(User).filter(User.email == req.email.lower()).first()
+    email = req.email.lower().strip()
+
+    # 1. Register in Supabase Auth and auto-confirm
+    try:
+        supabase_service.signup(
+            email=email,
+            password=req.password,
+            full_name=req.full_name,
+            org_name=req.organization_name,
+            industry=req.industry or "Marketing Digital",
+            language=req.language or "es",
+        )
+    except Exception as e:
+        logger.warning(f"Supabase signup warning: {e}")
+
+    # 2. Check if user already exists
+    existing = db.query(User).filter(User.email == email).first()
     if existing:
         raise NuvioException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Ya existe una cuenta registrada con este correo electrónico.",
         )
 
-    # Ensure plans exist
+    # 3. Ensure plans exist
     BillingService.seed_plans(db)
     free_plan = db.query(Plan).filter(Plan.code == "free").first()
 
@@ -57,7 +76,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     # Create primary admin user
     user = User(
         organization_id=org.id,
-        email=req.email.lower(),
+        email=email,
         hashed_password=hash_password(req.password),
         full_name=req.full_name,
         role="agency_admin",  # Primary owner has agency_admin role
@@ -83,7 +102,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
 
     access_token = create_access_token(
         subject=user.id,
-        claims={"org_id": org.id, "role": user.role, "email": user.email},
+        claims={"org_id": org.id, "org_name": org.name, "role": user.role, "email": user.email},
     )
     refresh_token = create_refresh_token(subject=user.id)
 
@@ -92,12 +111,62 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(req: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == req.email.lower()).first()
-    if not user or not verify_password(req.password, user.hashed_password):
+    email = req.email.lower().strip()
+    password = req.password
+
+    # 1. First authenticate with Supabase Auth
+    supabase_auth_success = False
+    supabase_user_meta = {}
+    try:
+        sb_res = supabase_service.login(email, password)
+        if sb_res.get("access_token") and sb_res.get("user"):
+            supabase_auth_success = True
+            supabase_user_meta = sb_res["user"].get("user_metadata", {})
+    except Exception as e:
+        logger.warning(f"Supabase login attempt error: {e}")
+
+    # 2. Check local database
+    user = db.query(User).filter(User.email == email).first()
+
+    # If Supabase succeeded, user is definitely authenticated in cloud!
+    if supabase_auth_success:
+        if not user:
+            # Sync user and org to local database instance
+            BillingService.seed_plans(db)
+            free_plan = db.query(Plan).filter(Plan.code == "free").first()
+            org_name = supabase_user_meta.get("org_name") or "Mi Organización"
+            clean_slug = org_name.lower().replace(" ", "-")[:40]
+            org = Organization(
+                name=org_name,
+                slug=f"{clean_slug}-{int(datetime.now(timezone.utc).timestamp())}",
+                industry=supabase_user_meta.get("industry") or "Marketing Digital",
+                timezone="America/New_York",
+                default_language=supabase_user_meta.get("language") or "es",
+                plan_id=free_plan.id if free_plan else None,
+                subscription_status="active",
+            )
+            db.add(org)
+            db.commit()
+            db.refresh(org)
+
+            user = User(
+                organization_id=org.id,
+                email=email,
+                hashed_password=hash_password(password),
+                full_name=supabase_user_meta.get("full_name") or email.split("@")[0].capitalize(),
+                role="agency_admin",
+                is_active=True,
+                language=supabase_user_meta.get("language") or "es",
+                timezone="America/New_York",
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+    elif not user or not verify_password(password, user.hashed_password):
         raise UnauthorizedException("Correo o contraseña incorrectos. Si es tu primera vez, por favor crea tu cuenta en la pestaña 'Crear Cuenta Real'.")
 
     if not user.is_active:
-        raise UnauthorizedException("Account is disabled. Please contact your administrator.")
+        raise UnauthorizedException("Tu cuenta está desactivada. Por favor contacta al administrador.")
 
     # Record login audit log
     audit = AuditLog(
@@ -111,9 +180,12 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     db.add(audit)
     db.commit()
 
+    org = db.query(Organization).filter(Organization.id == user.organization_id).first()
+    org_name = org.name if org else "Mi Organización"
+
     access_token = create_access_token(
         subject=user.id,
-        claims={"org_id": user.organization_id, "role": user.role, "email": user.email},
+        claims={"org_id": user.organization_id, "org_name": org_name, "role": user.role, "email": user.email},
     )
     refresh_token = create_refresh_token(subject=user.id)
 

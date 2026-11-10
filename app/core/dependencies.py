@@ -34,7 +34,48 @@ def get_current_user(
 
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise UnauthorizedException("User no longer exists")
+        email = payload.get("email")
+        if email:
+            from datetime import datetime, timezone
+            from app.db.models import Plan
+            from app.services.billing_service import BillingService
+
+            BillingService.seed_plans(db)
+            free_plan = db.query(Plan).filter(Plan.code == "free").first()
+
+            org_id = payload.get("org_id", 1)
+            org = db.query(Organization).filter(Organization.id == org_id).first()
+            if not org:
+                org = Organization(
+                    id=org_id,
+                    name=payload.get("org_name", "Mi Organización"),
+                    slug=f"org-{int(datetime.now(timezone.utc).timestamp())}",
+                    industry="Marketing Digital",
+                    timezone="America/New_York",
+                    default_language="es",
+                    plan_id=free_plan.id if free_plan else None,
+                    subscription_status="active",
+                )
+                db.add(org)
+                db.commit()
+                db.refresh(org)
+
+            user = User(
+                id=user_id,
+                organization_id=org.id,
+                email=email.lower(),
+                hashed_password="SUPABASE_MANAGED_SESSION",
+                full_name=email.split("@")[0].capitalize(),
+                role=payload.get("role", "agency_admin"),
+                is_active=True,
+                language="es",
+                timezone="America/New_York",
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        else:
+            raise UnauthorizedException("User no longer exists")
 
     if not user.is_active:
         raise UnauthorizedException("Account is disabled")
