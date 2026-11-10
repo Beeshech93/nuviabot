@@ -132,8 +132,8 @@ def test_live_integrations_management(client, auth_headers):
         headers=auth_headers,
         json={
             "openai_api_key": "sk-proj-testkey1234567890",
-            "meta_app_id": "987654321098765",
-            "meta_app_secret": "secret9876543210",
+            "meta_app_id": "5449820091910158",
+            "meta_app_secret": "64d9c0c84831b6a6b0b2fec43d7286dd",
         },
     )
     assert update_res.status_code == 200

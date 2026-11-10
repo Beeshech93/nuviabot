@@ -31,12 +31,14 @@ class Settings(BaseSettings):
     # 32-byte Fernet key for encrypting OAuth tokens in database
     ENCRYPTION_KEY: str = "dGVzdF9mZXJuZXRfa2V5XzMyX2J5dGVzX2FkZGFkZGFkZGFkZGE="
 
-    # Database
+    # Database & Supabase
     DATABASE_URL: str = (
         "sqlite:////tmp/nuviabot.db"
-        if os.getenv("VERCEL")
+        if os.getenv("VERCEL") and not os.getenv("DATABASE_URL")
         else "sqlite:///./nuviabot.db"
     )
+    SUPABASE_URL: str = "https://zghqluchsptyvuyhbyjm.supabase.co"
+    SUPABASE_KEY: str = ""
 
     # OpenAI / AI Assistant
     OPENAI_API_KEY: str = ""
