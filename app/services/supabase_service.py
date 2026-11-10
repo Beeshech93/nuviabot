@@ -124,6 +124,18 @@ class SupabaseAuthService:
             logger.error(f"Error resetting password by email: {e}")
         return False
 
+    def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """Find and return user dict from Supabase admin API if exists."""
+        try:
+            users_res = self._request("/auth/v1/admin/users", method="GET", use_admin=True)
+            users_list = users_res.get("users", [])
+            for u in users_list:
+                if u.get("email", "").lower() == email.lower():
+                    return u
+        except Exception as e:
+            logger.error(f"Error getting user by email: {e}")
+        return None
+
     def login(self, email: str, password: str) -> Dict[str, Any]:
         """Log in via Supabase Auth and handle email confirmation automatically."""
         res = self._request(

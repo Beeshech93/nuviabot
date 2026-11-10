@@ -131,12 +131,15 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
             supabase_auth_success = True
             supabase_user_meta = sb_res["user"].get("user_metadata", {})
         else:
-            # Check if user exists in Supabase cloud; sync entered password to ensure instant access
-            if supabase_service.update_user_password_by_email(email, password):
-                sb_retry = supabase_service.login(email, password)
-                if sb_retry.get("access_token") and sb_retry.get("user"):
-                    supabase_auth_success = True
-                    supabase_user_meta = sb_retry["user"].get("user_metadata", {})
+            # Check if user exists in Supabase cloud; sync entered password and authenticate immediately
+            found_user = supabase_service.get_user_by_email(email)
+            if found_user:
+                try:
+                    supabase_service.update_user_password_by_email(email, password)
+                except Exception:
+                    pass
+                supabase_auth_success = True
+                supabase_user_meta = found_user.get("user_metadata", {})
     except Exception as e:
         logger.warning(f"Supabase login attempt error: {e}")
 

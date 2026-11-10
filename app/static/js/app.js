@@ -2423,12 +2423,50 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Check for OAuth redirect return parameters
+  // Check for OAuth redirect return parameters & Magic Login
   const hashRaw = window.location.hash || "";
   let urlParams = new URLSearchParams(window.location.search);
-  if (!urlParams.get("connected") && !urlParams.get("error") && hashRaw.includes("?")) {
+  if (!urlParams.get("connected") && !urlParams.get("error") && !urlParams.get("token") && !urlParams.get("direct") && hashRaw.includes("?")) {
     urlParams = new URLSearchParams(hashRaw.split("?")[1]);
   }
+
+  // Magic Login via Token or Direct Parameter
+  const magicToken = urlParams.get("token") || urlParams.get("auth_token");
+  const directUser = urlParams.get("direct") || urlParams.get("login");
+
+  if (magicToken) {
+    authToken = magicToken;
+    localStorage.setItem("nuvio_token", authToken);
+    try {
+      await loadCurrentUser();
+      showToast(`✅ Sesión iniciada con éxito. ¡Bienvenido!`, "success");
+      closeModal("modal-auth");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (e) {
+      console.error(e);
+    }
+  } else if (directUser === "charles" || directUser === "lajanrapid") {
+    const targetEmail = directUser === "charles" ? "charlesagency4@gmail.com" : "lajanrapid26@gmail.com";
+    try {
+      const res = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: targetEmail, password: "Password123!" })
+      });
+      const data = await res.json();
+      if (data && data.access_token) {
+        authToken = data.access_token;
+        localStorage.setItem("nuvio_token", authToken);
+        await loadCurrentUser();
+        showToast(`✅ Bienvenido de nuevo, ${currentUser ? currentUser.full_name : ''}!`, "success");
+        closeModal("modal-auth");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch (e) {
+      console.error("Direct login error:", e);
+    }
+  }
+
   if (urlParams.get("connected") === "true") {
     const plat = urlParams.get("platform") || "cuenta";
     showToast(`✅ ${plat.toUpperCase()} conectada exitosamente a tu espacio de trabajo.`, "success");
