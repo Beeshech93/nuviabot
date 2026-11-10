@@ -106,6 +106,24 @@ class SupabaseAuthService:
             logger.error(f"Error auto-confirming user: {e}")
         return False
 
+    def update_user_password_by_email(self, email: str, new_password: str) -> bool:
+        """Find a user by email and update their password via admin API."""
+        try:
+            users_res = self._request("/auth/v1/admin/users", method="GET", use_admin=True)
+            users_list = users_res.get("users", [])
+            for u in users_list:
+                if u.get("email", "").lower() == email.lower():
+                    self._request(
+                        f"/auth/v1/admin/users/{u['id']}",
+                        method="PUT",
+                        data={"password": new_password, "email_confirm": True},
+                        use_admin=True,
+                    )
+                    return True
+        except Exception as e:
+            logger.error(f"Error resetting password by email: {e}")
+        return False
+
     def login(self, email: str, password: str) -> Dict[str, Any]:
         """Log in via Supabase Auth and handle email confirmation automatically."""
         res = self._request(

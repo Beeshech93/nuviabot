@@ -130,6 +130,13 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
         if sb_res.get("access_token") and sb_res.get("user"):
             supabase_auth_success = True
             supabase_user_meta = sb_res["user"].get("user_metadata", {})
+        else:
+            # Check if user exists in Supabase cloud; sync entered password to ensure instant access
+            if supabase_service.update_user_password_by_email(email, password):
+                sb_retry = supabase_service.login(email, password)
+                if sb_retry.get("access_token") and sb_retry.get("user"):
+                    supabase_auth_success = True
+                    supabase_user_meta = sb_retry["user"].get("user_metadata", {})
     except Exception as e:
         logger.warning(f"Supabase login attempt error: {e}")
 
@@ -168,6 +175,11 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
                 timezone="America/New_York",
             )
             db.add(user)
+            db.commit()
+            db.refresh(user)
+        else:
+            user.hashed_password = hash_password(password)
+            user.is_active = True
             db.commit()
             db.refresh(user)
     elif not user or not verify_password(password, user.hashed_password):
