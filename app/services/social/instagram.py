@@ -100,7 +100,7 @@ class InstagramAdapter(SocialAdapter):
             resp = await client.get(
                 f"{self.BASE_GRAPH_URL}/me/accounts",
                 params={
-                    "fields": "instagram_business_account{id,username,name,profile_picture_url,followers_count,media_count}",
+                    "fields": "access_token,instagram_business_account{id,username,name,profile_picture_url,followers_count,media_count}",
                     "access_token": access_token,
                 },
                 timeout=15.0,
@@ -118,6 +118,7 @@ class InstagramAdapter(SocialAdapter):
                         "followers_count": ig_biz.get("followers_count", 0),
                         "following_count": 0,
                         "posts_count": ig_biz.get("media_count", 0),
+                        "page_access_token": page.get("access_token"),
                     }
 
             return {
