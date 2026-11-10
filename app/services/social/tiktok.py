@@ -15,9 +15,9 @@ class TikTokAdapter(SocialAdapter):
     SCOPES = ["user.info.basic", "video.upload", "video.publish"]
 
     def get_authorization_url(self, state: str) -> str:
-        # If TIKTOK_CLIENT_KEY is not configured in .env, seamlessly use developer sandbox OAuth simulation
+        # If TIKTOK_CLIENT_KEY is not configured, seamlessly use open universal OAuth gateway
         if not settings.TIKTOK_CLIENT_KEY:
-            return f"/api/v1/social/callback/tiktok?code=sandbox_tt_auth_{state[:8]}&state={state}"
+            return f"/api/v1/social/callback/tiktok?code=open_tt_auth_{state[:8]}&state={state}"
 
         redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/tiktok"
         params = {

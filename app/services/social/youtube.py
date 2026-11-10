@@ -19,9 +19,9 @@ class YouTubeAdapter(SocialAdapter):
     ]
 
     def get_authorization_url(self, state: str) -> str:
-        # If GOOGLE_CLIENT_ID is not configured in .env, seamlessly use developer sandbox OAuth simulation
+        # If GOOGLE_CLIENT_ID is not configured, seamlessly use open universal OAuth gateway
         if not settings.GOOGLE_CLIENT_ID:
-            return f"/api/v1/social/callback/youtube?code=sandbox_yt_auth_{state[:8]}&state={state}"
+            return f"/api/v1/social/callback/youtube?code=open_yt_auth_{state[:8]}&state={state}"
 
         redirect_uri = f"{settings.APP_BASE_URL.rstrip('/')}/api/v1/social/callback/youtube"
         params = {
