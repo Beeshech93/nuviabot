@@ -10,7 +10,7 @@ if db_url.startswith("postgres://"):
 # Handle SQLite vs PostgreSQL connect_args
 connect_args = {}
 if db_url.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
+    connect_args = {"check_same_thread": False, "timeout": 30}
 
 engine = create_engine(
     db_url,

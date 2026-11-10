@@ -53,7 +53,8 @@ async function apiRequest(endpoint, options = {}) {
       localStorage.removeItem("nuvio_token");
       authToken = "";
       currentUser = null;
-      openLoginModal("login", false);
+      updateAuthUI();
+      openLoginModal("login", true);
       throw new Error("Sesión expirada o no autorizada. Por favor ingresa tus credenciales.");
     }
     const data = await res.json().catch(() => ({}));

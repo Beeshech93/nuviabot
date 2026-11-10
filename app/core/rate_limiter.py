@@ -19,7 +19,11 @@ class InMemoryRateLimiterMiddleware(BaseHTTPMiddleware):
         if path.startswith("/static") or path == "/health" or not path.startswith("/api/"):
             return await call_next(request)
 
-        client_ip = request.client.host if request.client else "127.0.0.1"
+        forwarded = request.headers.get("x-forwarded-for")
+        if forwarded:
+            client_ip = forwarded.split(",")[0].strip()
+        else:
+            client_ip = request.client.host if request.client else "127.0.0.1"
         now = time.time()
         window_start = now - self.window
 

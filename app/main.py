@@ -130,6 +130,7 @@ async def serve_dashboard(request: Request):
         if os.path.exists(html_path):
             with open(html_path, "r", encoding="utf-8") as f:
                 content = f.read()
+            content = content.replace("{{ project_name }}", settings.PROJECT_NAME).replace("{{ version }}", settings.VERSION)
             return HTMLResponse(content=content)
         raise
 
