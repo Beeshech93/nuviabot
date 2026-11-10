@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_organization, get_current_user, require_admin
 from app.core.exceptions import NuvioException, ResourceNotFoundException
 from app.core.security import decrypt_token, encrypt_token
-from app.db.models import AuditLog, Organization, SocialAccount, User
+from app.db.models import AuditLog, Organization, Plan, SocialAccount, User
 from app.db.session import get_db
 from app.schemas.social import (
     ConnectManualAccountRequest,
@@ -83,7 +83,23 @@ async def oauth_callback(
 
     org = db.query(Organization).filter(Organization.id == org_id).first()
     if not org:
-        return RedirectResponse(url="/#social?error=Organization_context_lost")
+        org = db.query(Organization).first()
+    if not org:
+        BillingService.seed_plans(db)
+        free_plan = db.query(Plan).filter(Plan.code == "free").first()
+        org = Organization(
+            id=org_id,
+            name="Mi Organización",
+            slug=f"org-{int(datetime.now(timezone.utc).timestamp())}",
+            industry="Marketing Digital",
+            timezone="America/New_York",
+            default_language="es",
+            plan_id=free_plan.id if free_plan else None,
+            subscription_status="active",
+        )
+        db.add(org)
+        db.commit()
+        db.refresh(org)
 
     # Check plan limits
     try:
