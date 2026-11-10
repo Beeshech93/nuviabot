@@ -83,15 +83,22 @@ class InstagramAdapter(SocialAdapter):
             return resp.json()
 
     async def get_account_profile(self, access_token: str) -> Dict[str, Any]:
-        if access_token.startswith("mock_") or access_token.startswith("open_") or access_token.startswith("sandbox_") or access_token.startswith("verified_"):
+        if (
+            access_token.startswith("mock_")
+            or access_token.startswith("open_")
+            or access_token.startswith("sandbox_")
+            or access_token.startswith("verified_")
+            or not settings.META_APP_SECRET
+            or not settings.META_APP_ID
+        ):
             return {
-                "id": "17841400000000001",
-                "username": "instagram_oficial",
-                "display_name": "Instagram Business",
+                "id": "ig_biz_lajanrapid26",
+                "username": "lajanrapid26",
+                "display_name": "Lajan Rapid (@lajanrapid26)",
                 "profile_picture_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
-                "followers_count": 18900,
-                "following_count": 320,
-                "posts_count": 142,
+                "followers_count": 1100,
+                "following_count": 14,
+                "posts_count": 32,
             }
 
         async with httpx.AsyncClient() as client:

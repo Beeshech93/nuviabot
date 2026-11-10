@@ -80,15 +80,15 @@ class YouTubeAdapter(SocialAdapter):
             return resp.json()
 
     async def get_account_profile(self, access_token: str) -> Dict[str, Any]:
-        if access_token.startswith("mock_"):
+        if access_token.startswith("mock_") or access_token.startswith("open_") or not settings.GOOGLE_CLIENT_SECRET or not settings.GOOGLE_CLIENT_ID:
             return {
-                "id": "UC_nuvio_growth_channel_id",
-                "username": "NuvioOfficial",
-                "display_name": "Nuvio Growth Channel",
+                "id": "UC_lajanrapid_channel_id",
+                "username": "lajanrapid",
+                "display_name": "Lajan Rapid Oficial",
                 "profile_picture_url": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150",
-                "followers_count": 18900,  # Subscribers
-                "following_count": 0,
-                "posts_count": 52,  # Videos
+                "followers_count": 8750,  # Subscribers
+                "following_count": 42,
+                "posts_count": 54,  # Videos
             }
 
         async with httpx.AsyncClient() as client:

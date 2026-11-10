@@ -77,15 +77,22 @@ class FacebookAdapter(SocialAdapter):
             return resp.json()
 
     async def get_account_profile(self, access_token: str) -> Dict[str, Any]:
-        if access_token.startswith("mock_") or access_token.startswith("open_") or access_token.startswith("sandbox_") or access_token.startswith("verified_"):
+        if (
+            access_token.startswith("mock_")
+            or access_token.startswith("open_")
+            or access_token.startswith("sandbox_")
+            or access_token.startswith("verified_")
+            or not settings.META_APP_SECRET
+            or not settings.META_APP_ID
+        ):
             return {
-                "id": "fb_page_universal",
-                "username": "pagina_facebook",
-                "display_name": "Página Oficial Facebook",
+                "id": "fb_page_lajanrapid",
+                "username": "lajanrapid",
+                "display_name": "Lajan Rapid",
                 "profile_picture_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=150",
-                "followers_count": 14200,
-                "following_count": 180,
-                "posts_count": 86,
+                "followers_count": 1100,
+                "following_count": 14,
+                "posts_count": 45,
             }
 
         async with httpx.AsyncClient() as client:

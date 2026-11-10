@@ -61,10 +61,14 @@ class Settings(BaseSettings):
     META_REDIRECT_URI: str = "https://nuviabot.vercel.app/api/v1/social/callback/meta"
     META_WEBHOOK_VERIFY_TOKEN: str = "nuvio_webhook_verify_secret_2026"
 
-    # TikTok Content Posting API
+    # TikTok Content Posting API & EulerStream Open Gateway
     TIKTOK_CLIENT_KEY: str = ""
     TIKTOK_CLIENT_SECRET: str = ""
     TIKTOK_REDIRECT_URI: str = "http://localhost:8000/api/v1/social/callback/tiktok"
+    EULER_API_KEY: str = os.getenv(
+        "EULER_API_KEY",
+        "euler_Yzc1MGIxZWJmMjg0ZDM3YWZkODMzM2E2OTc3MGJmYTJiZjNkMTU5ZDhiMTFhZTQwNWM5YWZi",
+    )
 
     # Google / YouTube Data API v3
     GOOGLE_CLIENT_ID: str = ""
