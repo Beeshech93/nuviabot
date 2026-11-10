@@ -1265,12 +1265,18 @@ async function saveSettingsForm(e) {
 // MODALS & HELPERS
 function openModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.add("open");
+  if (el) {
+    el.classList.add("open");
+    el.style.display = "flex";
+  }
 }
 
 function closeModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.remove("open");
+  if (el) {
+    el.classList.remove("open");
+    el.style.display = "none";
+  }
 }
 
 function openCreatePostModal(preset = {}) {

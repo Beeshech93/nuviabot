@@ -566,7 +566,7 @@ textarea.form-control {
 }
 
 .modal-overlay.open {
-  display: flex;
+  display: flex !important;
 }
 
 .modal-dialog {
@@ -1846,10 +1846,45 @@ textarea.form-control {
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/js/i18n.js"></script>
-<script src="/static/js/charts.js"></script>
-<script src="/static/js/app.js"></script>
+<script src="/static/js/i18n.js?v=20261110_02"></script>
+<script src="/static/js/charts.js?v=20261110_02"></script>
+<script src="/static/js/app.js?v=20261110_02"></script>
 <script>
+// Global foolproof modal and session handlers
+function openLoginModal(tab = "login", allowClose = true) {
+  const modal = document.getElementById("modal-auth");
+  if (!modal) return;
+  modal.classList.add("open");
+  modal.style.display = "flex";
+  const closeBtn = document.getElementById("modal-auth-close-btn");
+  if (closeBtn) closeBtn.style.display = allowClose ? "block" : "none";
+  if (typeof switchAuthTab === "function") {
+    switchAuthTab(tab);
+  }
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById("modal-auth");
+  if (modal) {
+    modal.classList.remove("open");
+    modal.style.display = "none";
+  }
+}
+
+function logout() {
+  if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+    localStorage.removeItem("nuvio_token");
+    if (typeof authToken !== "undefined") authToken = "";
+    const nameEl = document.getElementById("currentUserName");
+    const orgEl = document.getElementById("currentUserOrg");
+    const initEl = document.getElementById("currentUserInitials");
+    if (nameEl) nameEl.textContent = "Iniciar Sesión";
+    if (orgEl) orgEl.textContent = "Crear cuenta real";
+    if (initEl) initEl.textContent = "👤";
+    openLoginModal("login", false);
+  }
+}
+
 // Assistant helpers
 function sendAssistantPrompt(text) {
   document.getElementById("assistant-input").value = text;
