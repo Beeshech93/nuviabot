@@ -70,6 +70,19 @@ async function apiRequest(endpoint, options = {}) {
 // Auth Modal & Session Management
 let authModalCanClose = true;
 
+function updateAuthUI() {
+  const isAuth = Boolean(authToken && currentUser);
+  const sideUnauth = document.getElementById("sidebar-unauth");
+  const sideUser = document.getElementById("sidebar-user");
+  const topBtns = document.getElementById("topbar-auth-btns");
+  const ovBanner = document.getElementById("overview-welcome-banner");
+
+  if (sideUnauth) sideUnauth.style.display = isAuth ? "none" : "flex";
+  if (sideUser) sideUser.style.display = isAuth ? "flex" : "none";
+  if (topBtns) topBtns.style.display = isAuth ? "none" : "flex";
+  if (ovBanner) ovBanner.style.display = isAuth ? "none" : "flex";
+}
+
 function togglePasswordVisibility(inputId, btn) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -82,22 +95,26 @@ function togglePasswordVisibility(inputId, btn) {
   }
 }
 
-function openLoginModal(tab = "login", allowClose = true) {
+function openLoginModal(tab = "register", allowClose = true) {
   authModalCanClose = allowClose;
+  const modal = document.getElementById("modal-auth");
+  if (modal) {
+    modal.classList.add("open");
+    modal.style.display = "flex";
+  }
   const closeBtn = document.getElementById("modal-auth-close-btn");
   if (closeBtn) {
     closeBtn.style.display = allowClose ? "block" : "none";
   }
   switchAuthTab(tab);
-  openModal("modal-auth");
 }
 
 function closeAuthModal() {
-  if (!authModalCanClose && !authToken) {
-    showToast("Por favor inicia sesión o entra en modo Demo para continuar.", "warning");
-    return;
+  const modal = document.getElementById("modal-auth");
+  if (modal) {
+    modal.classList.remove("open");
+    modal.style.display = "none";
   }
-  closeModal("modal-auth");
 }
 
 function switchAuthTab(tab) {
@@ -244,7 +261,7 @@ async function submitRegisterForm(e) {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Crear Organización y Empezar Gratis";
+      btn.textContent = "Crear Cuenta de Administrador Real";
     }
   }
 }
@@ -255,12 +272,9 @@ function logout() {
     authToken = "";
     currentUser = null;
     currentOrg = null;
-    if (currentUserNameEl) currentUserNameEl.textContent = "Iniciar Sesión";
-    if (currentUserOrgEl) currentUserOrgEl.textContent = "Crear cuenta real";
-    const initialsEl = document.getElementById("currentUserInitials");
-    if (initialsEl) initialsEl.textContent = "👤";
+    updateAuthUI();
     showToast("Has cerrado sesión correctamente.", "info");
-    openLoginModal("login", false);
+    openLoginModal("login", true);
   }
 }
 
@@ -284,8 +298,12 @@ async function loadCurrentUser() {
       currentLang = currentUser.language;
       if (langSelect) langSelect.value = currentLang;
     }
+    updateAuthUI();
   } catch (e) {
     console.error(e);
+    currentUser = null;
+    currentOrg = null;
+    updateAuthUI();
   }
 }
 
@@ -1688,12 +1706,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // Verify or prompt login
   if (!authToken) {
-    openLoginModal("login", false);
+    updateAuthUI();
   } else {
     try {
       await loadCurrentUser();
     } catch (e) {
-      openLoginModal("login", false);
+      updateAuthUI();
     }
   }
 
