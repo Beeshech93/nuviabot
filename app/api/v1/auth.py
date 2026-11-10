@@ -46,47 +46,55 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
         logger.warning(f"Supabase signup warning: {e}")
 
     # 2. Check if user already exists
-    existing = db.query(User).filter(User.email == email).first()
-    if existing:
-        raise NuvioException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Ya existe una cuenta registrada con este correo electrónico.",
-        )
-
-    # 3. Ensure plans exist
     BillingService.seed_plans(db)
     free_plan = db.query(Plan).filter(Plan.code == "free").first()
 
-    # Generate organization slug
-    clean_slug = req.organization_name.lower().replace(" ", "-")[:40]
-    org = Organization(
-        name=req.organization_name,
-        slug=f"{clean_slug}-{int(datetime.now(timezone.utc).timestamp())}",
-        industry=req.industry or "General",
-        timezone=req.timezone or "America/New_York",
-        default_language=req.language or "es",
-        plan_id=free_plan.id if free_plan else None,
-        subscription_status="active",
-        auto_publish_enabled=False,
-    )
-    db.add(org)
-    db.commit()
-    db.refresh(org)
+    existing = db.query(User).filter(User.email == email).first()
+    if existing:
+        # Update existing user's credentials and log them in
+        existing.hashed_password = hash_password(req.password)
+        if req.full_name:
+            existing.full_name = req.full_name
+        existing.is_active = True
+        db.commit()
+        db.refresh(existing)
+        user = existing
+        org = db.query(Organization).filter(Organization.id == user.organization_id).first()
+        org_id = user.organization_id
+        org_name = org.name if org else "Mi Organización"
+    else:
+        # Generate organization slug
+        clean_slug = req.organization_name.lower().replace(" ", "-")[:40]
+        org = Organization(
+            name=req.organization_name,
+            slug=f"{clean_slug}-{int(datetime.now(timezone.utc).timestamp())}",
+            industry=req.industry or "General",
+            timezone=req.timezone or "America/New_York",
+            default_language=req.language or "es",
+            plan_id=free_plan.id if free_plan else None,
+            subscription_status="active",
+            auto_publish_enabled=False,
+        )
+        db.add(org)
+        db.commit()
+        db.refresh(org)
+        org_id = org.id
+        org_name = org.name
 
-    # Create primary admin user
-    user = User(
-        organization_id=org.id,
-        email=email,
-        hashed_password=hash_password(req.password),
-        full_name=req.full_name,
-        role="agency_admin",  # Primary owner has agency_admin role
-        is_active=True,
-        language=req.language or "es",
-        timezone=req.timezone or "America/New_York",
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+        # Create primary admin user
+        user = User(
+            organization_id=org.id,
+            email=email,
+            hashed_password=hash_password(req.password),
+            full_name=req.full_name,
+            role="agency_admin",  # Primary owner has agency_admin role
+            is_active=True,
+            language=req.language or "es",
+            timezone=req.timezone or "America/New_York",
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
     # Record registration audit log
     audit = AuditLog(

@@ -48,7 +48,7 @@ class SupabaseAuthService:
             return {"error": str(e)}
 
     def signup(self, email: str, password: str, full_name: str, org_name: str, industry: str = "Marketing Digital", language: str = "es") -> Dict[str, Any]:
-        """Sign up user in Supabase and automatically confirm email via admin API."""
+        """Sign up user in Supabase and automatically confirm email via admin API, or update password if existing."""
         payload = {
             "email": email.lower(),
             "password": password,
@@ -64,7 +64,31 @@ class SupabaseAuthService:
 
         if user_id:
             # Auto-confirm email immediately with admin API
-            self._request(f"/auth/v1/admin/users/{user_id}", method="PUT", data={"email_confirm": True}, use_admin=True)
+            self._request(f"/auth/v1/admin/users/{user_id}", method="PUT", data={"email_confirm": True, "password": password}, use_admin=True)
+        else:
+            # User might already exist in Supabase: find user and update their password!
+            try:
+                users_res = self._request("/auth/v1/admin/users", method="GET", use_admin=True)
+                for u in users_res.get("users", []):
+                    if u.get("email", "").lower() == email.lower():
+                        self._request(
+                            f"/auth/v1/admin/users/{u['id']}",
+                            method="PUT",
+                            data={
+                                "password": password,
+                                "email_confirm": True,
+                                "user_metadata": {
+                                    "full_name": full_name,
+                                    "org_name": org_name,
+                                    "industry": industry,
+                                    "language": language,
+                                },
+                            },
+                            use_admin=True,
+                        )
+                        return {"user": u, "id": u["id"]}
+            except Exception as e:
+                logger.error(f"Error updating existing user in Supabase: {e}")
 
         return res
 
