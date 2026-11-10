@@ -362,6 +362,7 @@ function switchView(viewName) {
   // View specific loaders
   if (viewName === "overview") loadOverview();
   else if (viewName === "social") loadSocialAccounts();
+  else if (viewName === "booster") initBoosterView();
   else if (viewName === "queue") loadPublishingQueue();
   else if (viewName === "approvals") loadApprovals();
   else if (viewName === "media") loadMediaLibrary();
@@ -502,9 +503,10 @@ async function loadSocialAccounts() {
               </div>
             </div>
           </div>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="testAccountConn(${conn.id})">Probar API</button>
             <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="syncAccountProfile(${conn.id})">Sincronizar</button>
+            <button class="btn btn-primary btn-sm" style="flex:1.2;background:linear-gradient(135deg,#ec4899,#8b5cf6);" onclick="openBoosterForAccount('${plat.id}', '${escapeHtml(conn.username)}')">🚀 Impulsar</button>
             <button class="btn btn-danger btn-sm" onclick="disconnectAccount(${conn.id})">✕</button>
           </div>
         `;
@@ -517,9 +519,10 @@ async function loadSocialAccounts() {
             </div>
             <p style="font-size:0.82rem;color:var(--text-muted);margin:16px 0;">${plat.desc}. Conecta tu cuenta oficial para habilitar publicación programada y métricas.</p>
           </div>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-primary btn-sm" style="flex:1;" onclick="startOAuthConnect('${plat.id}')">Conectar con OAuth</button>
             <button class="btn btn-secondary btn-sm" onclick="openManualConnectModal('${plat.id}')">Token</button>
+            <button class="btn btn-secondary btn-sm" style="background:rgba(236,72,153,0.15);color:#ec4899;border-color:rgba(236,72,153,0.3);" onclick="openBoosterForAccount('${plat.id}', 'lajanrapid')">🚀 Booster</button>
           </div>
         `;
       }
@@ -583,6 +586,250 @@ async function disconnectAccount(id) {
   }
 }
 window.disconnectAccount = disconnectAccount;
+
+// ==========================================
+// 2B. GROWTH BOOSTER & VIRAL ENGINE
+// ==========================================
+let currentBoosterTab = "post";
+
+function switchBoosterTab(tab) {
+  currentBoosterTab = tab;
+  document.querySelectorAll(".booster-tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".booster-tab-content").forEach(c => c.style.display = "none");
+
+  const activeBtn = document.getElementById(`btn-booster-tab-${tab}`);
+  const activeContent = document.getElementById(`booster-tab-${tab}`);
+  if (activeBtn) activeBtn.classList.add("active");
+  if (activeContent) activeContent.style.display = "block";
+
+  if (tab === "campaign") {
+    recalculateCampaign();
+  }
+}
+window.switchBoosterTab = switchBoosterTab;
+
+function openBoosterForAccount(platform, username) {
+  switchView("booster");
+  switchBoosterTab("campaign");
+  const select = document.getElementById("camp-account-select");
+  if (select) {
+    const val = `${platform}|${username}`;
+    let found = false;
+    for (let opt of select.options) {
+      if (opt.value === val) {
+        opt.selected = true;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const opt = new Option(`${platform.toUpperCase()} - @${username}`, val, true, true);
+      select.add(opt);
+    }
+  }
+  const postPlat = document.getElementById("booster-post-platform");
+  if (postPlat) postPlat.value = platform;
+}
+window.openBoosterForAccount = openBoosterForAccount;
+
+async function initBoosterView() {
+  try {
+    const accounts = await apiRequest("/social/accounts");
+    const select = document.getElementById("camp-account-select");
+    if (select && accounts && accounts.length > 0) {
+      select.innerHTML = "";
+      accounts.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = `${a.platform}|${a.username}`;
+        opt.textContent = `${a.platform.toUpperCase()} - ${a.display_name || a.username} (@${a.username})`;
+        select.appendChild(opt);
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  recalculateCampaign();
+}
+window.initBoosterView = initBoosterView;
+
+async function runPostBoost() {
+  const platform = document.getElementById("booster-post-platform").value;
+  const goal = document.getElementById("booster-post-goal").value;
+  const audience = document.getElementById("booster-post-audience").value;
+  const caption = document.getElementById("booster-post-caption").value.trim();
+  const btn = document.getElementById("btn-run-post-boost");
+
+  if (!caption) {
+    showToast("Por favor ingresa el texto o idea de la publicación", "warning");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "⚡ Analizando y Potenciando con IA...";
+  showToast("Aplicando ganchos virales y optimización de seguidores...", "info");
+
+  try {
+    const res = await apiRequest("/ai/boost/optimize-post", {
+      method: "POST",
+      body: JSON.stringify({
+        caption,
+        social_network: platform,
+        goal,
+        target_audience: audience,
+        language: typeof currentLang !== "undefined" ? currentLang : "es"
+      })
+    });
+
+    document.getElementById("booster-hook-text").textContent = res.viral_hook || "🔥 Gancho de 3 Segundos Activado";
+    document.getElementById("booster-full-text").value = res.boosted_caption;
+    document.getElementById("booster-best-time").textContent = res.best_time_to_post || "12:30 PM - 2:00 PM";
+    document.getElementById("booster-cta-summary").textContent = res.follower_cta ? "Imán de Seguidores Activo" : "CTA de Interacción";
+    document.getElementById("booster-multiplier-badge").textContent = res.estimated_reach_multiplier || "+420% Alcance Proyectado";
+
+    document.getElementById("booster-output-empty").style.display = "none";
+    document.getElementById("booster-output-ready").style.display = "block";
+
+    showToast("🚀 ¡Publicación potenciada exitosamente con ganchos virales!", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Error al potenciar post: " + (err.message || err), "danger");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🚀 Potenciar Publicación con IA";
+  }
+}
+window.runPostBoost = runPostBoost;
+
+function copyBoosterText() {
+  const text = document.getElementById("booster-full-text").value;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("Texto copiado al portapapeles con ganchos y hashtags", "success");
+  });
+}
+window.copyBoosterText = copyBoosterText;
+
+function useBoosterInStudio() {
+  const text = document.getElementById("booster-full-text").value;
+  const platform = document.getElementById("booster-post-platform").value;
+  openCreatePostModal();
+  setTimeout(() => {
+    const contentEl = document.getElementById("modal-post-content");
+    if (contentEl) contentEl.value = text;
+    const titleEl = document.getElementById("modal-post-title");
+    if (titleEl) titleEl.value = `🚀 Post Potenciado (${platform.toUpperCase()})`;
+    const chk = document.querySelector(`input[name="target_platforms"][value="${platform}"]`);
+    if (chk) chk.checked = true;
+  }, 100);
+}
+window.useBoosterInStudio = useBoosterInStudio;
+
+function setCampBudget(amount, btn) {
+  document.getElementById("camp-budget-input").value = amount;
+  document.querySelectorAll(".camp-btn-budget").forEach(b => {
+    b.classList.remove("active");
+    b.style.borderColor = "var(--border)";
+    b.style.background = "transparent";
+    b.style.color = "var(--text-main)";
+  });
+  if (btn) {
+    btn.classList.add("active");
+    btn.style.borderColor = "#ec4899";
+    btn.style.background = "rgba(236,72,153,0.15)";
+    btn.style.color = "#fff";
+  }
+  recalculateCampaign();
+}
+window.setCampBudget = setCampBudget;
+
+async function recalculateCampaign() {
+  const budgetInp = document.getElementById("camp-budget-input");
+  const durationInp = document.getElementById("camp-duration-select");
+  const goalInp = document.getElementById("camp-goal-select");
+  if (!budgetInp || !durationInp) return;
+
+  const budget = parseFloat(budgetInp.value) || 10;
+  const duration = parseInt(durationInp.value) || 5;
+  const goal = goalInp ? goalInp.value : "followers";
+
+  try {
+    const res = await apiRequest("/ai/boost/campaign-calc", {
+      method: "POST",
+      body: JSON.stringify({
+        budget_usd: budget,
+        duration_days: duration,
+        goal,
+        platform: "facebook"
+      })
+    });
+
+    document.getElementById("proj-impressions").textContent = `${res.estimated_impressions_min.toLocaleString()} - ${res.estimated_impressions_max.toLocaleString()}`;
+    document.getElementById("proj-reach").textContent = `${res.estimated_reach_min.toLocaleString()} - ${res.estimated_reach_max.toLocaleString()}`;
+    document.getElementById("proj-visits").textContent = `${res.estimated_profile_visits_min.toLocaleString()} - ${res.estimated_profile_visits_max.toLocaleString()}`;
+    document.getElementById("proj-followers").textContent = `+${res.estimated_followers_gain_min} a +${res.estimated_followers_gain_max}`;
+    document.getElementById("proj-strategy-text").textContent = res.recommended_strategy;
+  } catch (e) {
+    const minImp = Math.round(budget * 550);
+    const maxImp = Math.round(budget * 1350);
+    const minReach = Math.round(minImp * 0.72);
+    const maxReach = Math.round(maxImp * 0.78);
+    const minVisits = Math.max(10, Math.round(minReach * 0.045));
+    const maxVisits = Math.max(25, Math.round(maxReach * 0.085));
+    const minFoll = Math.max(5, Math.round(minVisits * 0.22));
+    const maxFoll = Math.max(15, Math.round(maxVisits * 0.38));
+
+    document.getElementById("proj-impressions").textContent = `${minImp.toLocaleString()} - ${maxImp.toLocaleString()}`;
+    document.getElementById("proj-reach").textContent = `${minReach.toLocaleString()} - ${maxReach.toLocaleString()}`;
+    document.getElementById("proj-visits").textContent = `${minVisits.toLocaleString()} - ${maxVisits.toLocaleString()}`;
+    document.getElementById("proj-followers").textContent = `+${minFoll} a +${maxFoll}`;
+  }
+}
+window.recalculateCampaign = recalculateCampaign;
+
+async function launchBoosterCampaign() {
+  const accVal = document.getElementById("camp-account-select").value || "facebook|lajanrapid";
+  const parts = accVal.split("|");
+  const platform = parts[0] || "facebook";
+  const username = parts[1] || "lajanrapid";
+  const budget = parseFloat(document.getElementById("camp-budget-input").value) || 10;
+  const duration = parseInt(document.getElementById("camp-duration-select").value) || 5;
+  const goal = document.getElementById("camp-goal-select").value;
+  const interests = document.getElementById("camp-interests-input").value;
+  const btn = document.getElementById("btn-launch-campaign");
+
+  btn.disabled = true;
+  btn.textContent = "🔥 Activando Campaña con Meta API...";
+
+  try {
+    const res = await apiRequest("/ai/boost/launch", {
+      method: "POST",
+      body: JSON.stringify({
+        platform,
+        account_username: username,
+        budget_usd: budget,
+        duration_days: duration,
+        goal,
+        target_interests: interests
+      })
+    });
+
+    const badgeContainer = document.getElementById("camp-active-badge-container");
+    if (badgeContainer) {
+      badgeContainer.style.display = "block";
+      document.getElementById("camp-active-title").textContent = `✅ Campaña de Impulso Activa: ${res.campaign_id}`;
+      document.getElementById("camp-active-desc").textContent = `Impulsando @${username} en ${platform.toUpperCase()} (${duration} días con ${budget} USD). Prioridad de distribución algorítmica iniciada.`;
+    }
+
+    showToast(res.message, "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Error al activar campaña: " + (err.message || err), "danger");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🔥 Activar Campaña de Impulso Ahora";
+  }
+}
+window.launchBoosterCampaign = launchBoosterCampaign;
 
 // 3. AI CONTENT STUDIO
 let generatedProposals = [];

@@ -4,6 +4,12 @@ from app.core.dependencies import get_current_organization, get_current_user
 from app.db.models import Organization, User
 from app.db.session import get_db
 from app.schemas.ai import (
+    AIBoostCampaignCalcRequest,
+    AIBoostCampaignCalcResponse,
+    AIBoostLaunchRequest,
+    AIBoostLaunchResponse,
+    AIBoostPostRequest,
+    AIBoostPostResponse,
     AICalendarIdeaRequest,
     AICalendarIdeaResponse,
     AIChatRequest,
@@ -122,4 +128,39 @@ async def chat_assistant(
     org.ai_credits_used_this_month = (org.ai_credits_used_this_month or 0) + 1
     db.commit()
     return result
+
+
+@router.post("/boost/optimize-post", response_model=AIBoostPostResponse)
+async def boost_post_content(
+    req: AIBoostPostRequest,
+    current_user: User = Depends(get_current_user),
+    org: Organization = Depends(get_current_organization),
+    db: Session = Depends(get_db),
+):
+    """Supercharge post captions with viral 3-second hooks, follower CTAs, and peak reach hashtags."""
+    BillingService.check_can_use_ai_credits(db, org, credits=1)
+    result = await ai_service.boost_post(req)
+    org.ai_credits_used_this_month = (org.ai_credits_used_this_month or 0) + 1
+    db.commit()
+    return result
+
+
+@router.post("/boost/campaign-calc", response_model=AIBoostCampaignCalcResponse)
+def calculate_boost_campaign(
+    req: AIBoostCampaignCalcRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Calculate projected views, reach, profile visits, and new followers based on budget."""
+    return ai_service.calculate_boost_campaign(req)
+
+
+@router.post("/boost/launch", response_model=AIBoostLaunchResponse)
+async def launch_boost_campaign(
+    req: AIBoostLaunchRequest,
+    current_user: User = Depends(get_current_user),
+    org: Organization = Depends(get_current_organization),
+    db: Session = Depends(get_db),
+):
+    """Launch or schedule an official boost campaign targeting followers and views."""
+    return await ai_service.launch_boost_campaign(req, org_id=org.id)
 

@@ -703,6 +703,12 @@ textarea.form-control {
         <span>Cuentas Sociales</span>
       </div>
 
+      <div class="nav-item" data-view="booster">
+        <svg class="nav-icon" width="18" height="18" style="width:18px;height:18px;min-width:18px;min-height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        <span>Growth Booster</span>
+        <span style="background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;font-size:0.62rem;font-weight:800;padding:2px 6px;border-radius:10px;margin-left:auto;">VIRAL</span>
+      </div>
+
       <div class="nav-item" data-view="studio">
         <svg class="nav-icon" width="18" height="18" style="width:18px;height:18px;min-width:18px;min-height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
         <span>AI Content Studio</span>
@@ -880,6 +886,20 @@ textarea.form-control {
           </div>
         </div>
 
+        <!-- Growth Booster CTA Widget -->
+        <div style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(139,92,246,0.15));border:1px solid rgba(236,72,153,0.3);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;font-size:0.7rem;font-weight:800;padding:2px 8px;border-radius:12px;">POTENCIADOR VIRAL</span>
+              <h3 style="margin:0;font-size:1.15rem;font-weight:800;color:#fff;">🚀 Growth Booster: Impulso de Páginas y Seguidores</h3>
+            </div>
+            <p style="margin:0;color:var(--text-muted);font-size:0.86rem;max-width:700px;">Multiplica las visualizaciones de tus publicaciones hasta 5x, convierte visitantes en seguidores leales con ganchos virales y lanza campañas de impulso algorítmico para tus páginas oficiales.</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchView('booster')" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:700;box-shadow:0 0 16px rgba(236,72,153,0.4);border:none;padding:10px 22px;cursor:pointer;">
+            ⚡ Activar Booster Ahora
+          </button>
+        </div>
+
         <!-- Interactive Evolution Chart -->
         <div class="card-panel">
           <div class="panel-title">
@@ -946,6 +966,286 @@ textarea.form-control {
         </div>
 
         <div class="grid-2" id="social-cards-grid"></div>
+      </section>
+
+      <!-- 2B. GROWTH BOOSTER & VIRAL ENGINE -->
+      <section class="view-section" id="view-booster">
+        <div class="page-header">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <h2 class="page-title">🚀 Growth Booster & Impulso Viral</h2>
+              <span class="status-badge" style="background:rgba(236,72,153,0.15);color:#ec4899;font-weight:700;">Algoritmo 2026</span>
+            </div>
+            <p class="page-subtitle">Acelera el crecimiento de tus páginas, multiplica las visualizaciones y convierte espectadores en seguidores fieles.</p>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-secondary btn-sm" onclick="switchBoosterTab('post')">⚡ Potenciar Post</button>
+            <button class="btn btn-primary btn-sm" onclick="switchBoosterTab('campaign')" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);">🔥 Campaña de Impulso</button>
+          </div>
+        </div>
+
+        <!-- Mode Navigation Tabs -->
+        <div style="display:flex;gap:10px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+          <button class="btn btn-secondary btn-sm booster-tab-btn active" id="btn-booster-tab-post" onclick="switchBoosterTab('post')">⚡ Potenciador de Publicaciones</button>
+          <button class="btn btn-secondary btn-sm booster-tab-btn" id="btn-booster-tab-campaign" onclick="switchBoosterTab('campaign')">🔥 Campaña de Impulso Meta / Redes</button>
+          <button class="btn btn-secondary btn-sm booster-tab-btn" id="btn-booster-tab-playbook" onclick="switchBoosterTab('playbook')">🧠 Playbook de Crecimiento Orgánico</button>
+        </div>
+
+        <!-- TAB 1: POST BOOSTER -->
+        <div id="booster-tab-post" class="booster-tab-content">
+          <div class="grid-2">
+            <!-- Form Input -->
+            <div class="card-panel">
+              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:16px;color:#fff;">1. Configurar Optimización Algorítmica</h3>
+              
+              <div class="form-group">
+                <label class="form-label">Red Social Destino</label>
+                <select id="booster-post-platform" class="form-control">
+                  <option value="facebook">Facebook Pages (Feed & Reels)</option>
+                  <option value="instagram" selected>Instagram Business (Reels & Feed)</option>
+                  <option value="tiktok">TikTok Creator</option>
+                  <option value="youtube">YouTube Channel (Shorts & Videos)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Objetivo Principal de Crecimiento</label>
+                <select id="booster-post-goal" class="form-control">
+                  <option value="followers" selected>👥 Multiplicar Seguidores (Follower Growth Funnel)</option>
+                  <option value="views">👁️ Máximas Visualizaciones & Alcance Viral</option>
+                  <option value="engagement">💬 Disparar Comentarios e Interacción</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Público / Nicho Objetivo</label>
+                <input type="text" id="booster-post-audience" class="form-control" value="Personas interesadas en finanzas, negocios, inversiones y crecimiento" placeholder="Ej: Emprendedores, clientes potenciales, etc.">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Texto o Borrador del Post</label>
+                <textarea id="booster-post-caption" class="form-control" rows="5" placeholder="Escribe o pega aquí la idea de tu publicación (ej: Cómo ahorrar dinero inteligentemente este mes)..."></textarea>
+                <span style="font-size:0.75rem;color:var(--text-dim);margin-top:4px;display:block;">💡 La IA le inyectará un gancho magnético, formato de alta retención, llamado a la acción para ganar seguidores y 15 hashtags virales.</span>
+              </div>
+
+              <button type="button" class="btn btn-primary" id="btn-run-post-boost" onclick="runPostBoost()" style="width:100%;background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:700;padding:12px;margin-top:10px;">
+                🚀 Potenciar Publicación con IA
+              </button>
+            </div>
+
+            <!-- Results Output -->
+            <div class="card-panel" id="booster-results-panel" style="background:var(--bg-input);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:1.05rem;font-weight:700;color:#fff;">2. Publicación Optimizada para Máximo Alcance</h3>
+                <span id="booster-multiplier-badge" class="status-badge" style="background:rgba(16,185,129,0.15);color:#10b981;font-weight:700;">+380% Alcance Proyectado</span>
+              </div>
+
+              <div id="booster-output-empty" style="text-align:center;padding:40px 20px;color:var(--text-dim);">
+                <div style="font-size:2.5rem;margin-bottom:12px;">⚡</div>
+                <p>Escribe tu publicación a la izquierda y presiona <strong>"Potenciar Publicación"</strong> para generar el gancho viral y optimizarla para conseguir más seguidores.</p>
+              </div>
+
+              <div id="booster-output-ready" style="display:none;">
+                <div style="margin-bottom:14px;">
+                  <label class="form-label" style="color:#ec4899;font-weight:700;font-size:0.75rem;">🔥 GANCHO VIRAL (PRIMEROS 3 SEGUNDOS)</label>
+                  <div id="booster-hook-text" style="background:rgba(236,72,153,0.1);border-left:3px solid #ec4899;padding:10px 14px;border-radius:6px;font-size:0.88rem;font-weight:600;color:#fff;"></div>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <label class="form-label" style="font-size:0.75rem;">📝 TEXTO COMPLETO OPTIMIZADO</label>
+                  <textarea id="booster-full-text" class="form-control" rows="8" style="font-size:0.85rem;line-height:1.5;"></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+                  <div style="background:var(--bg-card);padding:10px;border-radius:8px;border:1px solid var(--border);">
+                    <span style="font-size:0.7rem;color:var(--text-muted);display:block;">⏰ MEJOR HORA PARA PUBLICAR</span>
+                    <span id="booster-best-time" style="font-size:0.82rem;font-weight:700;color:#38bdf8;">12:30 PM - 2:00 PM</span>
+                  </div>
+                  <div style="background:var(--bg-card);padding:10px;border-radius:8px;border:1px solid var(--border);">
+                    <span style="font-size:0.7rem;color:var(--text-muted);display:block;">🎯 LLAMADO A SEGUIR (CTA)</span>
+                    <span id="booster-cta-summary" style="font-size:0.82rem;font-weight:700;color:#10b981;">Imán de Seguidores Activo</span>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="copyBoosterText()">📋 Copiar Texto</button>
+                  <button type="button" class="btn btn-primary btn-sm" style="flex:1.2;background:linear-gradient(135deg,#6366f1,#06b6d4);" onclick="useBoosterInStudio()">✍️ Crear Post en Studio</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: CAMPAIGN SIMULATOR & LAUNCHER -->
+        <div id="booster-tab-campaign" class="booster-tab-content" style="display:none;">
+          <div class="grid-2">
+            <!-- Campaign Setup -->
+            <div class="card-panel">
+              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:16px;color:#fff;">🔥 Configurar Impulso de Página Oficial</h3>
+
+              <div class="form-group">
+                <label class="form-label">Página / Cuenta a Impulsar</label>
+                <select id="camp-account-select" class="form-control">
+                  <option value="facebook|lajanrapid">Facebook Pages - Lajan Rapid (@lajanrapid)</option>
+                  <option value="instagram|lajanrapid">Instagram Business - Lajan Rapid (@lajanrapid)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Objetivo de la Campaña</label>
+                <select id="camp-goal-select" class="form-control" onchange="recalculateCampaign()">
+                  <option value="followers" selected>🌟 Ganar Nuevos Seguidores (Crecimiento de Comunidad)</option>
+                  <option value="views">👁️ Maximizar Visualizaciones de Videos y Posts</option>
+                  <option value="engagement">💬 Conseguir Mensajes Directos y Clientes</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Presupuesto de Impulso (USD)</label>
+                <div style="display:flex;gap:6px;margin-bottom:8px;">
+                  <button type="button" class="btn btn-secondary btn-sm camp-btn-budget" onclick="setCampBudget(5, this)">$5</button>
+                  <button type="button" class="btn btn-secondary btn-sm camp-btn-budget active" onclick="setCampBudget(10, this)" style="border-color:#ec4899;color:#fff;background:rgba(236,72,153,0.15);">$10 (Recomendado)</button>
+                  <button type="button" class="btn btn-secondary btn-sm camp-btn-budget" onclick="setCampBudget(25, this)">$25</button>
+                  <button type="button" class="btn btn-secondary btn-sm camp-btn-budget" onclick="setCampBudget(50, this)">$50</button>
+                  <button type="button" class="btn btn-secondary btn-sm camp-btn-budget" onclick="setCampBudget(100, this)">$100</button>
+                </div>
+                <input type="number" id="camp-budget-input" class="form-control" value="10" min="1" max="1000" oninput="recalculateCampaign()">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Duración de la Campaña</label>
+                <select id="camp-duration-select" class="form-control" onchange="recalculateCampaign()">
+                  <option value="3">3 Días (Impulso Rápido)</option>
+                  <option value="5" selected>5 Días (Óptimo para Algoritmo)</option>
+                  <option value="7">7 Días (1 Semana Completa)</option>
+                  <option value="14">14 Días (Crecimiento Sostenido)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Intereses y Segmentación</label>
+                <input type="text" id="camp-interests-input" class="form-control" value="Negocios, Finanzas, Inversión, Emprendimiento, Comercio" placeholder="Separados por comas">
+              </div>
+
+              <button type="button" class="btn btn-primary" id="btn-launch-campaign" onclick="launchBoosterCampaign()" style="width:100%;background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:700;padding:12px;margin-top:10px;">
+                🔥 Activar Campaña de Impulso Ahora
+              </button>
+            </div>
+
+            <!-- Real-Time Projections -->
+            <div class="card-panel">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <h3 style="font-size:1.05rem;font-weight:700;color:#fff;">📊 Resultados Proyectados en Tiempo Real</h3>
+                <span class="status-badge status-published">Simulador Oficial</span>
+              </div>
+
+              <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div class="stat-card" style="padding:14px;">
+                  <span class="stat-title" style="font-size:0.75rem;">👁️ Visualizaciones Estimadas</span>
+                  <div class="stat-value" id="proj-impressions" style="font-size:1.3rem;color:#38bdf8;">5,500 - 13,500</div>
+                  <div class="stat-trend trend-up">Impresiones en Feed y Reels</div>
+                </div>
+
+                <div class="stat-card" style="padding:14px;">
+                  <span class="stat-title" style="font-size:0.75rem;">👥 Personas Alcanzadas</span>
+                  <div class="stat-value" id="proj-reach" style="font-size:1.3rem;color:#a855f7;">3,960 - 10,530</div>
+                  <div class="stat-trend trend-up">Público nuevo que no te sigue</div>
+                </div>
+
+                <div class="stat-card" style="padding:14px;">
+                  <span class="stat-title" style="font-size:0.75rem;">🚪 Visitas al Perfil</span>
+                  <div class="stat-value" id="proj-visits" style="font-size:1.3rem;color:#f59e0b;">178 - 895</div>
+                  <div class="stat-trend trend-up">Tráfico directo a tu página</div>
+                </div>
+
+                <div class="stat-card" style="padding:14px;background:rgba(236,72,153,0.1);border-color:rgba(236,72,153,0.3);">
+                  <span class="stat-title" style="font-size:0.75rem;color:#ec4899;font-weight:700;">🌟 NUEVOS SEGUIDORES</span>
+                  <div class="stat-value" id="proj-followers" style="font-size:1.4rem;color:#ec4899;">+39 a +340</div>
+                  <div class="stat-trend trend-up" style="color:#ec4899;">Crecimiento directo de página</div>
+                </div>
+              </div>
+
+              <div style="background:var(--bg-input);padding:14px;border-radius:8px;font-size:0.8rem;line-height:1.5;color:var(--text-dim);margin-bottom:16px;">
+                💡 <strong>Estrategia Algorítmica:</strong> <span id="proj-strategy-text">Distribución inteligente con objetivo de Seguidores y Visualizaciones mediante la API de Meta, optimizando la puja automáticamente en horarios pico.</span>
+              </div>
+
+              <div id="camp-active-badge-container" style="display:none;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:12px;margin-top:10px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.1rem;">✅</span>
+                  <div>
+                    <strong style="color:#10b981;font-size:0.85rem;" id="camp-active-title">Campaña de Impulso Activa</strong>
+                    <p style="margin:0;font-size:0.78rem;color:var(--text-dim);" id="camp-active-desc">Tus publicaciones están recibiendo prioridad en el feed.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: ORGANIC GROWTH PLAYBOOK -->
+        <div id="booster-tab-playbook" class="booster-tab-content" style="display:none;">
+          <div class="grid-2">
+            <div class="card-panel">
+              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:14px;color:#fff;">⏰ Horarios de Máximo Tráfico en 2026</h3>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">Publicar en el momento exacto multiplica tus visualizaciones hasta 3x sin gastar un centavo.</p>
+
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="padding:12px;background:var(--bg-input);border-radius:8px;border-left:3px solid #38bdf8;">
+                  <strong style="color:#38bdf8;font-size:0.85rem;">🌅 Mediodía: 12:30 PM - 2:00 PM</strong>
+                  <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-dim);">Pico de descanso y almuerzo. Ideal para Reels cortos, videos virales y frases de impacto.</p>
+                </div>
+
+                <div style="padding:12px;background:var(--bg-input);border-radius:8px;border-left:3px solid #ec4899;">
+                  <strong style="color:#ec4899;font-size:0.85rem;">🌆 Noche Pico: 7:30 PM - 9:30 PM</strong>
+                  <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-dim);">Momento de mayor tiempo de pantalla del día. Perfecto para carruseles, publicaciones educativas y ofertas.</p>
+                </div>
+
+                <div style="padding:12px;background:var(--bg-input);border-radius:8px;border-left:3px solid #10b981;">
+                  <strong style="color:#10b981;font-size:0.85rem;">☀️ Fines de Semana: 10:00 AM - 1:00 PM</strong>
+                  <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-dim);">Alta navegación en Facebook e Instagram para descubrir nuevas cuentas y contenido de entretenimiento.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-panel">
+              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:14px;color:#fff;">🎯 Los 4 Secretos para Ganar Seguidores Diarios</h3>
+              
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:1.2rem;">1️⃣</span>
+                  <div>
+                    <strong style="font-size:0.85rem;color:#fff;">La Regla de los 3 Segundos:</strong>
+                    <p style="margin:2px 0 0 0;font-size:0.78rem;color:var(--text-dim);">El algoritmo de Meta decide si viralizar un post en los primeros 3 segundos. Comienza siempre con una pregunta provocativa o dato impactante.</p>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:1.2rem;">2️⃣</span>
+                  <div>
+                    <strong style="font-size:0.85rem;color:#fff;">El Comentario Fijado con Pregunta:</strong>
+                    <p style="margin:2px 0 0 0;font-size:0.78rem;color:var(--text-dim);">Escribe el primer comentario con una pregunta abierta. Cuando la gente comenta, el algoritmo le muestra el post a sus amigos.</p>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:1.2rem;">3️⃣</span>
+                  <div>
+                    <strong style="font-size:0.85rem;color:#fff;">El Botón de Seguir como Solución:</strong>
+                    <p style="margin:2px 0 0 0;font-size:0.78rem;color:var(--text-dim);">No pidas que te sigan por pedir. Di: <em>"Síguenos para aprender cómo [resolver X problema] todos los días"</em>.</p>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <span style="font-size:1.2rem;">4️⃣</span>
+                  <div>
+                    <strong style="font-size:0.85rem;color:#fff;">Publicación Cruzada Automática:</strong>
+                    <p style="margin:2px 0 0 0;font-size:0.78rem;color:var(--text-dim);">Nuvio publica al mismo tiempo en Facebook Pages e Instagram, capturando audiencias distintas con el mismo esfuerzo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- 3. AI CONTENT STUDIO -->
@@ -1877,9 +2177,9 @@ textarea.form-control {
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<script src="/static/js/i18n.js"></script>
-<script src="/static/js/charts.js"></script>
-<script src="/static/js/app.v2.js"></script>
+<script src="/static/js/i18n.js?v=20261110_10"></script>
+<script src="/static/js/charts.js?v=20261110_10"></script>
+<script src="/static/js/app.v2.js?v=20261110_10"></script>
 <script>
 // Global Client & Platform Switchers
 if (typeof window.switchActiveClient === "undefined") {

@@ -5,6 +5,7 @@ const I18N = {
     nav: {
       overview: "Overview",
       socialAccounts: "Cuentas Sociales",
+      booster: "Growth Booster",
       contentStudio: "AI Content Studio",
       aiAssistant: "Asistente AI",
       calendar: "Calendario",
@@ -100,6 +101,7 @@ const I18N = {
     nav: {
       overview: "Overview",
       socialAccounts: "Social Accounts",
+      booster: "Growth Booster",
       contentStudio: "AI Content Studio",
       aiAssistant: "AI Assistant",
       calendar: "Content Calendar",
@@ -195,6 +197,7 @@ const I18N = {
     nav: {
       overview: "Apèsi Jeneral",
       socialAccounts: "Kont Rezo Sosyal",
+      booster: "Growth Booster",
       contentStudio: "AI Content Studio",
       aiAssistant: "Asistan AI",
       calendar: "Kalandriye Piblikasyon",

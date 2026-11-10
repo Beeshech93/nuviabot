@@ -100,3 +100,62 @@ class AIChatResponse(BaseModel):
     suggested_actions: List[dict] = []
     language: str
 
+
+# Growth Booster & Viral Engine Schemas
+class AIBoostPostRequest(BaseModel):
+    caption: str
+    social_network: str = "instagram"  # instagram, facebook, tiktok, youtube
+    goal: str = "followers"  # followers, views, engagement
+    target_audience: Optional[str] = "Público general interesado en finanzas y negocios"
+    language: Optional[str] = "es"
+
+
+class AIBoostPostResponse(BaseModel):
+    boosted_caption: str
+    viral_hook: str
+    follower_cta: str
+    recommended_hashtags: List[str]
+    best_time_to_post: str
+    estimated_reach_multiplier: str
+    tips: List[str]
+
+
+class AIBoostCampaignCalcRequest(BaseModel):
+    platform: str = "facebook"
+    budget_usd: float = 10.0
+    duration_days: int = 5
+    goal: str = "followers"  # followers, views, engagement
+    country: Optional[str] = "Global"
+
+
+class AIBoostCampaignCalcResponse(BaseModel):
+    estimated_impressions_min: int
+    estimated_impressions_max: int
+    estimated_reach_min: int
+    estimated_reach_max: int
+    estimated_profile_visits_min: int
+    estimated_profile_visits_max: int
+    estimated_followers_gain_min: int
+    estimated_followers_gain_max: int
+    cost_per_follower_est: str
+    recommended_strategy: str
+
+
+class AIBoostLaunchRequest(BaseModel):
+    platform: str = "facebook"
+    account_username: str = "lajanrapid"
+    post_id: Optional[int] = None
+    goal: str = "followers"
+    budget_usd: float = 10.0
+    duration_days: int = 5
+    target_interests: Optional[str] = "Negocios, Finanzas, Inversión"
+    target_countries: Optional[str] = "Global"
+
+
+class AIBoostLaunchResponse(BaseModel):
+    success: bool
+    campaign_id: str
+    status: str
+    message: str
+    projected_results: dict
+
