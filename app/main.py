@@ -44,9 +44,10 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
 
-    # Start background scheduler
+    # Start background scheduler only in persistent server environments (not in serverless Vercel)
     global scheduler_task
-    scheduler_task = asyncio.create_task(background_scheduler())
+    if not os.getenv("VERCEL"):
+        scheduler_task = asyncio.create_task(background_scheduler())
 
     yield
 
