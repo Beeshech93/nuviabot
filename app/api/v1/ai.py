@@ -10,6 +10,8 @@ from app.schemas.ai import (
     AIBoostLaunchResponse,
     AIBoostPostRequest,
     AIBoostPostResponse,
+    AIBoostUrlRequest,
+    AIBoostUrlResponse,
     AICalendarIdeaRequest,
     AICalendarIdeaResponse,
     AIChatRequest,
@@ -163,4 +165,13 @@ async def launch_boost_campaign(
 ):
     """Launch or schedule an official boost campaign targeting followers and views."""
     return await ai_service.launch_boost_campaign(req, org_id=org.id)
+
+
+@router.post("/boost/by-url", response_model=AIBoostUrlResponse)
+def boost_by_url(
+    req: AIBoostUrlRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Analyze and generate viral growth and boost strategy directly from a Page or Post URL."""
+    return ai_service.boost_by_url(req)
 

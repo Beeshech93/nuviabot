@@ -590,7 +590,118 @@ window.disconnectAccount = disconnectAccount;
 // ==========================================
 // 2B. GROWTH BOOSTER & VIRAL ENGINE
 // ==========================================
-let currentBoosterTab = "post";
+let currentBoosterTab = "url";
+let lastUrlBoostData = null;
+
+function setSampleUrl(type) {
+  const inp = document.getElementById("booster-url-input");
+  if (!inp) return;
+  if (type === "fb-page") inp.value = "https://www.facebook.com/lajanrapid";
+  else if (type === "ig-page") inp.value = "https://www.instagram.com/lajanrapid";
+  else if (type === "ig-reel") inp.value = "https://www.instagram.com/reel/C-xyz123/";
+  runUrlBoost();
+}
+window.setSampleUrl = setSampleUrl;
+
+async function runUrlBoost() {
+  const inp = document.getElementById("booster-url-input");
+  const url = inp ? inp.value.trim() : "";
+  const goal = document.getElementById("booster-url-goal") ? document.getElementById("booster-url-goal").value : "followers";
+  const budget = parseFloat(document.getElementById("booster-url-budget").value) || 10;
+  const duration = parseInt(document.getElementById("booster-url-duration").value) || 5;
+  const btn = document.getElementById("btn-run-url-boost");
+
+  if (!url) {
+    showToast("Por favor ingresa el link de tu página o post", "warning");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "⚡ Analizando Enlace con IA...";
+  showToast("Extrayendo parámetros de viralización para el enlace...", "info");
+
+  try {
+    const res = await apiRequest("/ai/boost/by-url", {
+      method: "POST",
+      body: JSON.stringify({
+        url,
+        goal,
+        budget_usd: budget,
+        duration_days: duration,
+        language: typeof currentLang !== "undefined" ? currentLang : "es"
+      })
+    });
+
+    lastUrlBoostData = res;
+
+    document.getElementById("booster-url-type-badge").textContent = res.target_type === "page" ? "Página Oficial" : "Publicación / Reel";
+    document.getElementById("booster-url-platform-badge").textContent = res.detected_platform.toUpperCase();
+    document.getElementById("booster-url-headline").textContent = res.headline;
+    const linkEl = document.getElementById("booster-url-clean-link");
+    linkEl.href = res.cleaned_url;
+    linkEl.textContent = `🔗 ${res.cleaned_url}`;
+
+    document.getElementById("booster-url-impressions").textContent = res.estimated_impressions;
+    document.getElementById("booster-url-followers").textContent = res.estimated_followers_gain;
+    document.getElementById("booster-url-hook").textContent = res.viral_hook_recommendation;
+    document.getElementById("booster-url-cta").textContent = res.follower_cta;
+    document.getElementById("booster-url-comment").textContent = res.pinned_comment_template;
+
+    document.getElementById("booster-url-empty").style.display = "none";
+    document.getElementById("booster-url-ready").style.display = "block";
+
+    showToast("🚀 ¡Estrategia de impulso generada para tu enlace!", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Error al analizar enlace: " + (err.message || err), "danger");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🚀 Analizar e Impulsar Enlace con IA";
+  }
+}
+window.runUrlBoost = runUrlBoost;
+
+function copyUrlBoosterStrategy() {
+  if (!lastUrlBoostData) return;
+  const full = `${lastUrlBoostData.headline}\nEnlace: ${lastUrlBoostData.cleaned_url}\n\n🔥 Gancho:\n${lastUrlBoostData.viral_hook_recommendation}\n\n🎯 CTA Seguidores:\n${lastUrlBoostData.follower_cta}\n\n📌 Comentario Fijado:\n${lastUrlBoostData.pinned_comment_template}\n\nHashtags:\n${lastUrlBoostData.recommended_hashtags.join(" ")}`;
+  navigator.clipboard.writeText(full).then(() => {
+    showToast("Estrategia copiada al portapapeles", "success");
+  });
+}
+window.copyUrlBoosterStrategy = copyUrlBoosterStrategy;
+
+async function activateUrlBoostCampaign() {
+  if (!lastUrlBoostData) return;
+  const btn = document.getElementById("btn-activate-url-campaign");
+  btn.disabled = true;
+  btn.textContent = "🔥 Activando Impulso...";
+
+  try {
+    const budget = parseFloat(document.getElementById("booster-url-budget").value) || 10;
+    const duration = parseInt(document.getElementById("booster-url-duration").value) || 5;
+
+    const res = await apiRequest("/ai/boost/launch", {
+      method: "POST",
+      body: JSON.stringify({
+        platform: lastUrlBoostData.detected_platform,
+        account_username: lastUrlBoostData.extracted_handle_or_id,
+        budget_usd: budget,
+        duration_days: duration,
+        goal: document.getElementById("booster-url-goal").value,
+        target_interests: "Negocios, Finanzas, Inversión, Crecimiento"
+      })
+    });
+
+    showToast(`✅ ¡Campaña de impulso activada con éxito para ${lastUrlBoostData.cleaned_url}!`, "success");
+    btn.textContent = "✅ Impulso Activo";
+  } catch (err) {
+    console.error(err);
+    showToast("Error al activar impulso: " + (err.message || err), "danger");
+    btn.disabled = false;
+    btn.textContent = "🔥 Activar Impulso Ahora";
+  }
+}
+window.activateUrlBoostCampaign = activateUrlBoostCampaign;
 
 function switchBoosterTab(tab) {
   currentBoosterTab = tab;

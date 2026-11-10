@@ -9,6 +9,8 @@ from app.schemas.ai import (
     AIBoostLaunchResponse,
     AIBoostPostRequest,
     AIBoostPostResponse,
+    AIBoostUrlRequest,
+    AIBoostUrlResponse,
     AICalendarDayPlan,
     AICalendarIdeaResponse,
     AIChatResponse,
@@ -758,6 +760,105 @@ Format output as a JSON object with this key:
                 "duration": f"{req.duration_days} días",
                 "target_audience": req.target_interests or "Público general interesado en negocios y crecimiento"
             }
+        )
+
+    def boost_by_url(self, req: AIBoostUrlRequest) -> AIBoostUrlResponse:
+        """Parse Facebook or Instagram page/post URL and generate targeted viral boost strategy."""
+        raw_url = req.url.strip()
+        lower_url = raw_url.lower()
+
+        # 1. Detect platform
+        if "instagram.com" in lower_url:
+            platform = "instagram"
+            if "/p/" in lower_url or "/reel/" in lower_url or "/tv/" in lower_url:
+                target_type = "post"
+            else:
+                target_type = "page"
+        elif "facebook.com" in lower_url or "fb.com" in lower_url or "fb.watch" in lower_url:
+            platform = "facebook"
+            if "/posts/" in lower_url or "watch" in lower_url or "/reel/" in lower_url or "/videos/" in lower_url:
+                target_type = "post"
+            else:
+                target_type = "page"
+        elif "tiktok.com" in lower_url:
+            platform = "tiktok"
+            target_type = "post" if "/video/" in lower_url else "page"
+        elif "youtube.com" in lower_url or "youtu.be" in lower_url:
+            platform = "youtube"
+            target_type = "post" if ("/watch" in lower_url or "youtu.be" in lower_url or "/shorts/" in lower_url) else "page"
+        else:
+            platform = "facebook"
+            target_type = "page"
+
+        # 2. Extract handle or identifier from URL
+        parts = [p for p in raw_url.split("?")[0].rstrip("/").split("/") if p and p not in ("https:", "http:", "www.facebook.com", "facebook.com", "www.instagram.com", "instagram.com", "tiktok.com", "www.tiktok.com", "youtube.com")]
+        handle = parts[-1] if parts else "lajanrapid"
+        if handle in ("posts", "videos", "reel", "p") and len(parts) >= 2:
+            handle = parts[-2]
+
+        budget = max(1.0, float(req.budget_usd))
+        calc = self.calculate_boost_campaign(
+            AIBoostCampaignCalcRequest(
+                platform=platform,
+                budget_usd=budget,
+                duration_days=req.duration_days,
+                goal=req.goal
+            )
+        )
+
+        if target_type == "page":
+            headline = f"🚀 Estrategia de Crecimiento para la Página @{handle} en {platform.capitalize()}"
+            viral_hook = f"📢 ¿Quieres descubrir contenido de alto impacto para hacer crecer tus proyectos? Te presentamos la página oficial de @{handle} 👇"
+            follower_cta = f"👉 Toca el botón SEGUIR en la página oficial @{handle} y activa las notificaciones 🔔 para recibir consejos exclusivos y novedades diarias."
+            pinned_comment = f"📌 BIENVENIDOS: ¿Qué tipo de contenido te gustaría ver más en nuestra página? Deja tu comentario abajo y cuéntanos 👇"
+            actions = [
+                f"Activar campaña de tráfico continuo directo al perfil de @{handle}.",
+                "Publicar 3 Reels o videos cortos semanales invitando a seguir la página.",
+                "Responder las preguntas de la audiencia en los comentarios fijados."
+            ]
+        else:
+            headline = f"🔥 Estrategia de Viralización para la Publicación ({handle}) en {platform.capitalize()}"
+            viral_hook = f"⚡ ATENCIÓN: Mira esta publicación antes de que se vuelva viral en {platform.capitalize()} 👇"
+            follower_cta = f"💬 Si te sirvió este contenido, dale Me Gusta, compártelo y síguenos en @{handle} para ver más publicaciones como esta todos los días."
+            pinned_comment = f"📌 PREGUNTA DE HOY: ¿Cuál es tu experiencia o duda sobre este tema? ¡Comenta abajo y estaré respondiendo a todos! 👇"
+            actions = [
+                f"Activar Meta Boost Post enfocado en 'Visualizaciones de Video / ThruPlay'.",
+                "Fijar el comentario con pregunta abierta en los primeros 10 minutos de publicación.",
+                "Compartir en Stories con sticker de interacción para reactivar el algoritmo."
+            ]
+
+        hashtags = [
+            f"#{handle.replace('@', '')}",
+            "#lajanrapid",
+            "#crecimientodigital",
+            "#viralpost",
+            "#negociosdigitales",
+            "#marketingdigital",
+            "#redessociales",
+            "#exito",
+            "#finanzasinteligentes",
+            f"#{platform}viral",
+            "#tendencia2026",
+            "#comunidad",
+            "#emprendedores",
+            "#viralreels",
+            "#viralvideo"
+        ]
+
+        return AIBoostUrlResponse(
+            detected_platform=platform,
+            target_type=target_type,
+            extracted_handle_or_id=handle,
+            cleaned_url=raw_url,
+            headline=headline,
+            viral_hook_recommendation=viral_hook,
+            pinned_comment_template=pinned_comment,
+            follower_cta=follower_cta,
+            recommended_hashtags=hashtags,
+            estimated_impressions=f"{calc.estimated_impressions_min:,} - {calc.estimated_impressions_max:,}",
+            estimated_reach=f"{calc.estimated_reach_min:,} - {calc.estimated_reach_max:,} personas",
+            estimated_followers_gain=f"+{calc.estimated_followers_gain_min} a +{calc.estimated_followers_gain_max} nuevos seguidores",
+            suggested_boost_actions=actions,
         )
 
 

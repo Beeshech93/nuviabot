@@ -985,14 +985,124 @@ textarea.form-control {
         </div>
 
         <!-- Mode Navigation Tabs -->
-        <div style="display:flex;gap:10px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px;">
-          <button class="btn btn-secondary btn-sm booster-tab-btn active" id="btn-booster-tab-post" onclick="switchBoosterTab('post')">⚡ Potenciador de Publicaciones</button>
+        <div style="display:flex;gap:10px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm booster-tab-btn active" id="btn-booster-tab-url" onclick="switchBoosterTab('url')">🔗 Impulsar con Enlace (Página o Post)</button>
+          <button class="btn btn-secondary btn-sm booster-tab-btn" id="btn-booster-tab-post" onclick="switchBoosterTab('post')">⚡ Potenciador de Publicaciones</button>
           <button class="btn btn-secondary btn-sm booster-tab-btn" id="btn-booster-tab-campaign" onclick="switchBoosterTab('campaign')">🔥 Campaña de Impulso Meta / Redes</button>
           <button class="btn btn-secondary btn-sm booster-tab-btn" id="btn-booster-tab-playbook" onclick="switchBoosterTab('playbook')">🧠 Playbook de Crecimiento Orgánico</button>
         </div>
 
+        <!-- TAB URL: LINK BOOSTER -->
+        <div id="booster-tab-url" class="booster-tab-content">
+          <div class="grid-2">
+            <!-- Link Input Card -->
+            <div class="card-panel">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <span style="background:rgba(99,102,241,0.15);color:#818cf8;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:10px;">DIRECT LINK</span>
+                <h3 style="font-size:1.05rem;font-weight:700;margin:0;color:#fff;">Impulsar con Enlace de Página o Post</h3>
+              </div>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:16px;">
+                Pega el link directo de tu <strong>página de Facebook/Instagram</strong> (para ganar seguidores) o el <strong>link de un post/reel específico</strong> (para multiplicar sus visualizaciones).
+              </p>
+
+              <div class="form-group">
+                <label class="form-label">Enlace URL (Página o Publicación)</label>
+                <input type="url" id="booster-url-input" class="form-control" placeholder="https://www.facebook.com/lajanrapid o https://instagram.com/reel/..." value="https://www.facebook.com/lajanrapid">
+                <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.72rem;padding:3px 8px;" onclick="setSampleUrl('fb-page')">Ej: Página Facebook</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.72rem;padding:3px 8px;" onclick="setSampleUrl('ig-page')">Ej: Perfil Instagram</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="font-size:0.72rem;padding:3px 8px;" onclick="setSampleUrl('ig-reel')">Ej: Reel / Video</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Objetivo Deseado</label>
+                <select id="booster-url-goal" class="form-control">
+                  <option value="followers" selected>👥 Más Seguidores y Visitas a la Página</option>
+                  <option value="views">👁️ Máximas Visualizaciones y Alcance de Video/Post</option>
+                  <option value="engagement">💬 Comentarios, Compartidos y Mensajes</option>
+                </select>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Presupuesto Estimado (USD)</label>
+                  <input type="number" id="booster-url-budget" class="form-control" value="10" min="1" max="1000">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Duración</label>
+                  <select id="booster-url-duration" class="form-control">
+                    <option value="3">3 Días</option>
+                    <option value="5" selected>5 Días</option>
+                    <option value="7">7 Días</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary" id="btn-run-url-boost" onclick="runUrlBoost()" style="width:100%;background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:700;padding:12px;margin-top:10px;">
+                🚀 Analizar e Impulsar Enlace con IA
+              </button>
+            </div>
+
+            <!-- Link Results Card -->
+            <div class="card-panel" id="booster-url-results-panel" style="background:var(--bg-input);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:1.05rem;font-weight:700;color:#fff;">Resultados del Impulso por Enlace</h3>
+                <span id="booster-url-badge" class="status-badge" style="background:rgba(99,102,241,0.15);color:#818cf8;">Listo</span>
+              </div>
+
+              <div id="booster-url-empty" style="text-align:center;padding:40px 20px;color:var(--text-dim);">
+                <div style="font-size:2.5rem;margin-bottom:12px;">🔗</div>
+                <p>Pega el link de tu página o publicación a la izquierda y presiona <strong>"Analizar e Impulsar Enlace"</strong> para generar la estrategia viral y activar el crecimiento.</p>
+              </div>
+
+              <div id="booster-url-ready" style="display:none;">
+                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <span id="booster-url-type-badge" class="status-badge status-published">Página Oficial</span>
+                    <span id="booster-url-platform-badge" style="font-size:0.75rem;color:var(--text-dim);font-weight:600;">Facebook</span>
+                  </div>
+                  <h4 id="booster-url-headline" style="margin:0 0 6px 0;font-size:0.95rem;color:#fff;font-weight:700;">Estrategia de Crecimiento</h4>
+                  <a id="booster-url-clean-link" href="#" target="_blank" style="font-size:0.78rem;color:#38bdf8;text-decoration:none;word-break:break-all;"></a>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+                  <div class="stat-card" style="padding:10px;">
+                    <span class="stat-title" style="font-size:0.7rem;">👁️ Visualizaciones</span>
+                    <div class="stat-value" id="booster-url-impressions" style="font-size:1.15rem;color:#38bdf8;">5,500 - 13,500</div>
+                  </div>
+                  <div class="stat-card" style="padding:10px;background:rgba(236,72,153,0.1);border-color:rgba(236,72,153,0.3);">
+                    <span class="stat-title" style="font-size:0.7rem;color:#ec4899;font-weight:700;">🌟 NUEVOS SEGUIDORES</span>
+                    <div class="stat-value" id="booster-url-followers" style="font-size:1.15rem;color:#ec4899;">+40 a +340</div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                  <label class="form-label" style="font-size:0.72rem;color:#ec4899;font-weight:700;">🔥 GANCHO VIRAL GENERADO</label>
+                  <div id="booster-url-hook" style="background:rgba(236,72,153,0.1);padding:8px 12px;border-radius:6px;font-size:0.82rem;color:#fff;"></div>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                  <label class="form-label" style="font-size:0.72rem;color:#10b981;font-weight:700;">🎯 LLAMADO A SEGUIR (CTA MAGNÉTICO)</label>
+                  <div id="booster-url-cta" style="background:rgba(16,185,129,0.1);padding:8px 12px;border-radius:6px;font-size:0.82rem;color:#cbd5e1;"></div>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <label class="form-label" style="font-size:0.72rem;color:#38bdf8;font-weight:700;">📌 COMENTARIO FIJADO RECOMENDADO</label>
+                  <div id="booster-url-comment" style="background:var(--bg-card);border:1px solid var(--border);padding:8px 12px;border-radius:6px;font-size:0.82rem;color:var(--text-dim);"></div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="copyUrlBoosterStrategy()">📋 Copiar Estrategia</button>
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-activate-url-campaign" style="flex:1.2;background:linear-gradient(135deg,#ec4899,#8b5cf6);" onclick="activateUrlBoostCampaign()">🔥 Activar Impulso Ahora</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- TAB 1: POST BOOSTER -->
-        <div id="booster-tab-post" class="booster-tab-content">
+        <div id="booster-tab-post" class="booster-tab-content" style="display:none;">
           <div class="grid-2">
             <!-- Form Input -->
             <div class="card-panel">
@@ -2179,7 +2289,7 @@ textarea.form-control {
 
 <script src="/static/js/i18n.js?v=20261110_10"></script>
 <script src="/static/js/charts.js?v=20261110_10"></script>
-<script src="/static/js/app.v2.js?v=20261110_10"></script>
+<script src="/static/js/app.v2.js?v=20261110_11"></script>
 <script>
 // Global Client & Platform Switchers
 if (typeof window.switchActiveClient === "undefined") {

@@ -159,3 +159,27 @@ class AIBoostLaunchResponse(BaseModel):
     message: str
     projected_results: dict
 
+
+class AIBoostUrlRequest(BaseModel):
+    url: str
+    goal: str = "followers"  # followers, views, engagement
+    budget_usd: float = 10.0
+    duration_days: int = 5
+    language: Optional[str] = "es"
+
+
+class AIBoostUrlResponse(BaseModel):
+    detected_platform: str  # facebook, instagram, tiktok, youtube
+    target_type: str  # page, post, reel
+    extracted_handle_or_id: str
+    cleaned_url: str
+    headline: str
+    viral_hook_recommendation: str
+    pinned_comment_template: str
+    follower_cta: str
+    recommended_hashtags: List[str]
+    estimated_impressions: str
+    estimated_reach: str
+    estimated_followers_gain: str
+    suggested_boost_actions: List[str]
+
