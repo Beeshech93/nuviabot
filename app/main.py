@@ -48,15 +48,13 @@ async def lifespan(app: FastAPI):
     try:
         db = SessionLocal()
         try:
-            # Check if seeded to avoid repeated heavy work on serverless cold starts
-            from app.db.models import User
-            existing_user = db.query(User).filter(User.email == "admin@nuviogrowth.com").first()
-            if not existing_user:
-                seed_database(db)
+            # Seed plans (Free, Pro, Enterprise) for clean multi-tenant onboarding
+            from app.services.billing_service import BillingService
+            BillingService.seed_plans(db)
         finally:
             db.close()
     except Exception as e:
-        print(f"⚠️ Warning during seed_database: {e}")
+        print(f"⚠️ Warning during seed_plans: {e}")
 
     # Start background scheduler only in persistent server environments (not in serverless Vercel)
     global scheduler_task

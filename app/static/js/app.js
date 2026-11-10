@@ -237,15 +237,6 @@ async function submitRegisterForm(e) {
   }
 }
 
-async function loginDemo() {
-  const emailInput = document.getElementById("login-email");
-  const pwdInput = document.getElementById("login-password");
-  if (emailInput) emailInput.value = "admin@nuviogrowth.com";
-  if (pwdInput) pwdInput.value = "NuvioGrowth2026!";
-
-  await submitLoginForm({ preventDefault: () => {} });
-}
-
 function logout() {
   if (confirm("¿Estás seguro de que deseas cerrar tu sesión?")) {
     localStorage.removeItem("nuvio_token");
@@ -257,10 +248,6 @@ function logout() {
     showToast("Has cerrado sesión correctamente.", "info");
     openLoginModal("login", false);
   }
-}
-
-async function autoLogin() {
-  await loginDemo();
 }
 
 async function loadCurrentUser() {
