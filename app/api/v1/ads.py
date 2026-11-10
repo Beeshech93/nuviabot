@@ -52,3 +52,4 @@ def toggle_campaign_status(
     if not updated:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     return updated
+

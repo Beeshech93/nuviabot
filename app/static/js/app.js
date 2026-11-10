@@ -230,6 +230,15 @@ async function submitLoginForm(e) {
   }
 }
 
+function quickFillLogin(email, password) {
+  const emailInput = document.getElementById("login-email");
+  const pwdInput = document.getElementById("login-password");
+  if (emailInput) emailInput.value = email;
+  if (pwdInput) pwdInput.value = password;
+  submitLoginForm();
+}
+window.quickFillLogin = quickFillLogin;
+
 function goToRegisterWithEmail(email) {
   switchAuthTab('register');
   const regEmail = document.getElementById("reg-email");

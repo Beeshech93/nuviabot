@@ -207,3 +207,4 @@ class AdsService:
 
 
 ads_service = AdsService()
+
