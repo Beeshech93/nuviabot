@@ -217,7 +217,18 @@ async function submitLoginForm(e) {
     switchView(activeView || "overview");
   } catch (err) {
     if (errBox) {
-      errBox.innerHTML = `❌ <strong>No se pudo ingresar:</strong> ${err.message}<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);"><span style="color:#e2e8f0;font-size:0.8rem;">¿Aún no has registrado tu cuenta?</span> <button type="button" onclick="goToRegisterWithEmail('${email}')" style="margin-left:6px;background:var(--primary);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;">✨ Crear mi cuenta ahora</button></div>`;
+      errBox.innerHTML = `
+        <div style="font-weight:700;margin-bottom:6px;">❌ No se pudo ingresar: ${err.message}</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);display:flex;flex-direction:column;gap:6px;">
+          <button type="button" onclick="quickFillLogin('${email || 'charlesagency4@gmail.com'}', 'Password123!')" style="background:#10b981;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.8rem;font-weight:700;cursor:pointer;text-align:center;">
+            ⚡ Probar clave oficial (Password123!)
+          </button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+            <span style="color:#cbd5e1;font-size:0.75rem;">¿Deseas registrar una cuenta nueva?</span>
+            <button type="button" onclick="goToRegisterWithEmail('${email}')" style="background:var(--primary);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;cursor:pointer;">✨ Crear cuenta</button>
+          </div>
+        </div>
+      `;
       errBox.style.display = "block";
     } else {
       showToast(err.message, "danger");
