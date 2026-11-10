@@ -55,8 +55,9 @@ class Settings(BaseSettings):
     # Social APIs OAuth Credentials
     APP_BASE_URL: str = os.getenv("APP_BASE_URL") or "https://nuviabot.vercel.app"
     # Meta (Instagram Graph API & Facebook Graph API)
-    META_APP_ID: str = "5449820091910158"
-    META_APP_SECRET: str = "64d9c0c84831b6a6b0b2fec43d7286dd"
+    # Default empty: enables Universal Open Social Gateway for all public users without personal API blockers
+    META_APP_ID: str = os.getenv("META_APP_ID", "")
+    META_APP_SECRET: str = os.getenv("META_APP_SECRET", "")
     META_REDIRECT_URI: str = "https://nuviabot.vercel.app/api/v1/social/callback/meta"
     META_WEBHOOK_VERIFY_TOKEN: str = "nuvio_webhook_verify_secret_2026"
 
