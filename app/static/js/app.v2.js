@@ -1803,7 +1803,10 @@ function openManualConnectModal(platform) {
     titleEl.textContent = `Conectar ${names[platform] || platform}`;
   }
   const userInp = document.getElementById("manual-conn-user");
-  if (userInp) userInp.value = "lajanrapid";
+  if (userInp) {
+    if (!userInp.value || userInp.value === "lajanrapid") userInp.value = "";
+    userInp.placeholder = "Ej: mi_marca o @usuario";
+  }
   const tokenInp = document.getElementById("manual-conn-token");
   if (tokenInp) tokenInp.value = "";
   openModal("modal-manual-connect");

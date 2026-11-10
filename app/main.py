@@ -135,6 +135,7 @@ async def serve_dashboard(request: Request):
         raise
 
 
+@app.get("/privacy", response_class=HTMLResponse)
 @app.get("/privacy-policy", response_class=HTMLResponse)
 async def privacy_policy():
     return HTMLResponse(
@@ -153,6 +154,7 @@ async def privacy_policy():
     )
 
 
+@app.get("/terms", response_class=HTMLResponse)
 @app.get("/terms-of-service", response_class=HTMLResponse)
 async def terms_of_service():
     return HTMLResponse(

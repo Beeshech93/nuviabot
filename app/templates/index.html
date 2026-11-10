@@ -2200,17 +2200,17 @@ textarea.form-control {
         <input type="hidden" id="manual-conn-platform">
         
         <div style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.83rem; color: #cbd5e1;">
-          💡 <strong>Conexión Rápida Directa:</strong> Puedes ingresar tu usuario (ej: <code>lajanrapid</code>) para vincular la cuenta a tu espacio de trabajo y comenzar a crear y programar publicaciones de inmediato.
+          💡 <strong>Conexión Universal:</strong> Cualquier usuario o cliente puede ingresar su nombre de usuario o página para vincularla a su espacio de trabajo y habilitar la publicación y métricas.
         </div>
 
         <div class="form-group">
-          <label class="form-label">Nombre de Usuario o Página (@handle)</label>
-          <input type="text" id="manual-conn-user" class="form-control" placeholder="Ej: lajanrapid" required value="lajanrapid">
+          <label class="form-label">Nombre de Usuario o Página (@handle / URL)</label>
+          <input type="text" id="manual-conn-user" class="form-control" placeholder="Ej: mi_negocio o @usuario" required>
         </div>
         <div class="form-group">
           <label class="form-label">Token de Acceso Oficial (Opcional)</label>
-          <input type="text" id="manual-conn-token" class="form-control" placeholder="Dejar en blanco para usar credencial de la App">
-          <span style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; display: block;">Si se deja en blanco, se vinculará con la Meta App configurada (Lajan Rapid).</span>
+          <input type="text" id="manual-conn-token" class="form-control" placeholder="Opcional: dejar en blanco para conexión automática">
+          <span style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; display: block;">Si se deja en blanco, la plataforma genera y asigna una credencial segura automáticamente.</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -2547,7 +2547,7 @@ textarea.form-control {
 
 <script src="/static/js/i18n.js?v=20261110_10"></script>
 <script src="/static/js/charts.js?v=20261110_10"></script>
-<script src="/static/js/app.v2.js?v=20261110_17"></script>
+<script src="/static/js/app.v2.js?v=20261110_18"></script>
 <script>
 // Global Client & Platform Switchers
 if (typeof window.switchActiveClient === "undefined") {
