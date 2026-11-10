@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ project_name }} — AI Social Media Growth SaaS</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-badge">N</div>
+      <div class="brand-info">
+        <h1>NUVIO GROWTH</h1>
+        <span>AI Social Suite</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="nav-item active" data-view="overview">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span>Overview</span>
+      </div>
+
+      <div class="nav-item" data-view="social">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span>Cuentas Sociales</span>
+      </div>
+
+      <div class="nav-item" data-view="studio">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <span>AI Content Studio</span>
+      </div>
+
+      <div class="nav-item" data-view="assistant">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        <span>Asistente AI</span>
+      </div>
+
+      <div class="nav-item" data-view="calendar">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>Calendario</span>
+      </div>
+
+      <div class="nav-item" data-view="queue">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        <span>Cola de Publicación</span>
+      </div>
+
+      <div class="nav-item" data-view="approvals">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Aprobaciones</span>
+      </div>
+
+      <div class="nav-item" data-view="media">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>Biblioteca de Medios</span>
+      </div>
+
+      <div class="nav-item" data-view="analytics">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>Estadísticas</span>
+      </div>
+
+      <div class="nav-item" data-view="clients">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        <span>Clientes</span>
+      </div>
+
+      <div class="nav-item" data-view="team">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span>Equipo</span>
+      </div>
+
+      <div class="nav-item" data-view="billing">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        <span>Planes y Facturación</span>
+      </div>
+
+      <div class="nav-item" data-view="settings">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Configuración</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="user-avatar" alt="Avatar">
+      <div class="user-details">
+        <div class="user-name" id="currentUserName">Alex Rivera</div>
+        <div class="user-org" id="currentUserOrg">Nuvio Growth Agency</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <main class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <select id="topbar-client-select" class="lang-selector" style="background:var(--bg-card);border-color:var(--border);font-weight:600;max-width:240px;" onchange="switchActiveClient(this.value)">
+          <option value="">🏢 Todos los Clientes (Agencia HQ)</option>
+        </select>
+        <span style="font-size:0.75rem;background:var(--primary-light);color:var(--primary);font-weight:700;padding:4px 10px;border-radius:20px;">
+          API v2026 • Modo Seguro
+        </span>
+      </div>
+
+      <div class="topbar-right">
+        <select class="lang-selector" id="langSelect">
+          <option value="es">Español (ES)</option>
+          <option value="en">English (EN)</option>
+          <option value="ht">Kreyòl Ayisyen (HT)</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openCreatePostModal()">+ Nueva Publicación</button>
+      </div>
+    </header>
+
+    <div class="content-viewport">
+
+      <!-- 1. OVERVIEW -->
+      <section class="view-section active" id="view-overview">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Panel General de Crecimiento</h2>
+            <p class="page-subtitle">Resumen ejecutivo y monitoreo en tiempo real de tus redes sociales.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="loadOverview()">Actualizar Datos</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Cuentas Conectadas</span>
+              <div class="stat-icon-wrap">📱</div>
+            </div>
+            <div class="stat-value" id="ov-accounts-count">0</div>
+            <div class="stat-trend trend-up">● Meta, TikTok, YouTube</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Seguidores Totales</span>
+              <div class="stat-icon-wrap">👥</div>
+            </div>
+            <div class="stat-value" id="ov-followers-count">0</div>
+            <div class="stat-trend trend-up">↑ +5.4% este mes</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Impresiones (30d)</span>
+              <div class="stat-icon-wrap">👁️</div>
+            </div>
+            <div class="stat-value" id="ov-impressions-count">0</div>
+            <div class="stat-trend trend-up">↑ +12.8% alcance real</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Tasa de Interacción</span>
+              <div class="stat-icon-wrap">⚡</div>
+            </div>
+            <div class="stat-value" id="ov-engagement-rate">0.0%</div>
+            <div class="stat-trend trend-up">Orgánico y verificado</div>
+          </div>
+        </div>
+
+        <!-- Interactive Evolution Chart -->
+        <div class="card-panel">
+          <div class="panel-title">
+            <span>Evolución de Alcance e Impresiones (Últimos 30 días)</span>
+            <span style="font-size:0.75rem;color:var(--success);font-weight:700;">● Métricas Oficiales Verificadas</span>
+          </div>
+          <div style="width:100%;height:220px;position:relative;">
+            <canvas id="ov-timeline-canvas" style="width:100%;height:220px;display:block;"></canvas>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Connection Status Box -->
+          <div class="card-panel">
+            <div class="panel-title">
+              <span>Estado de Conexiones de API</span>
+              <button class="btn btn-secondary btn-sm" onclick="switchView('social')">Administrar</button>
+            </div>
+            <div id="ov-conn-status-wrap" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+
+          <!-- Quick AI Generator Action -->
+          <div class="card-panel" style="background:linear-gradient(135deg, rgba(99,102,241,0.1), rgba(6,182,212,0.1));border-color:rgba(99,102,241,0.3);">
+            <div class="panel-title">
+              <span>AI Content Studio Directo</span>
+              <span style="font-size:0.75rem;color:var(--primary);font-weight:700;">GPT-4o Mini</span>
+            </div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+              Crea contenido viral adaptado a tu industria en Español, Inglés o Kreyòl en segundos con aprobación previa antes de publicar.
+            </p>
+            <button class="btn btn-primary" onclick="switchView('studio')">Abrir Estudio de Creación IA →</button>
+          </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="card-panel">
+          <div class="panel-title">
+            <span>Publicaciones Recientes</span>
+            <button class="btn btn-secondary btn-sm" onclick="switchView('queue')">Ver Todas</button>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-dim);">
+                <th style="padding:10px;">Título / Texto</th>
+                <th style="padding:10px;">Redes</th>
+                <th style="padding:10px;">Estado</th>
+                <th style="padding:10px;">Fecha / Hora</th>
+                <th style="padding:10px;text-align:right;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="ov-recent-posts-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2. SOCIAL ACCOUNTS -->
+      <section class="view-section" id="view-social">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Cuentas Sociales Oficiales</h2>
+            <p class="page-subtitle">Conexión con Instagram, Facebook, TikTok y YouTube mediante APIs oficiales y seguras.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="loadSocialAccounts()">Sincronizar Cuentas</button>
+        </div>
+
+        <div class="grid-2" id="social-cards-grid"></div>
+      </section>
+
+      <!-- 3. AI CONTENT STUDIO -->
+      <section class="view-section" id="view-studio">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">AI Content Studio</h2>
+            <p class="page-subtitle">Genera copys, títulos, ganchos y hashtags optimizados para cada red social.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="generateAIContent()">🔄 Regenerar</button>
+            <button class="btn btn-secondary btn-sm" onclick="openHashtagGeneratorModal()">🏷️ Generar Hashtags</button>
+            <button class="btn btn-secondary btn-sm" onclick="generateWeeklyCalendarAI()">📅 Plan Semanal IA</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Form Inputs -->
+          <div class="card-panel">
+            <h3 style="font-size:1rem;margin-bottom:16px;">Parámetros del Contenido</h3>
+
+            <div class="form-group">
+              <label class="form-label">Nombre del Negocio</label>
+              <input type="text" id="ai-biz-name" class="form-control" value="Nuvio Growth Agency">
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Industria o Nicho</label>
+                <input type="text" id="ai-industry" class="form-control" value="Marketing & SaaS">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Producto / Servicio</label>
+                <input type="text" id="ai-prod-service" class="form-control" value="Crecimiento Orgánico en Redes">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Público Objetivo</label>
+              <input type="text" id="ai-audience" class="form-control" value="Empresas, Agencias y Creadores">
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Red Social Objetivo</label>
+                <select id="ai-platform" class="form-control">
+                  <option value="instagram">Instagram</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="youtube">YouTube</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Idioma</label>
+                <select id="ai-language" class="form-control">
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                  <option value="ht">Kreyòl Ayisyen</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Tono de Comunicación</label>
+                <select id="ai-tone" class="form-control">
+                  <option value="professional">Profesional & Autoritario</option>
+                  <option value="conversational">Cercano & Conversacional</option>
+                  <option value="energetic">Enérgico & Viral</option>
+                  <option value="inspirational">Inspiracional</option>
+                  <option value="humorous">Humorístico</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Objetivo</label>
+                <select id="ai-objective" class="form-control">
+                  <option value="brand_awareness">Reconocimiento de Marca</option>
+                  <option value="sales">Ventas / Conversión</option>
+                  <option value="engagement">Interacción y Comentarios</option>
+                  <option value="community">Creación de Comunidad</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Detalles o Indicaciones Adicionales</label>
+              <textarea id="ai-notes" class="form-control" placeholder="Ej: Enfatizar que no usamos bots, solo contenido y análisis real." style="min-height:60px;"></textarea>
+            </div>
+
+            <button class="btn btn-primary" id="ai-generate-btn" style="width:100%;" onclick="generateAIContent()">
+              Generar Propuestas con IA
+            </button>
+          </div>
+
+          <!-- Proposals Output -->
+          <div>
+            <div id="ai-proposals-container">
+              <div class="card-panel" style="text-align:center;padding:48px;color:var(--text-dim);">
+                <div style="font-size:2rem;margin-bottom:12px;">✨</div>
+                <h4>Estudio de IA Listo</h4>
+                <p style="font-size:0.85rem;margin-top:6px;">Configura los datos a la izquierda y pulsa 'Generar Propuestas' para obtener 3 variantes completas con ganchos, textos y hashtags.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. AI ASSISTANT -->
+      <section class="view-section" id="view-assistant">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Asistente AI de Crecimiento</h2>
+            <p class="page-subtitle">Consejero estratégico especializado en algoritmos de Instagram, TikTok, YouTube y Facebook.</p>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="sendAssistantPrompt('¿Cuáles son los 3 ganchos virales más efectivos para TikTok este año?')">Ganchos Virales TikTok</button>
+            <button class="btn btn-secondary btn-sm" onclick="sendAssistantPrompt('Plan de 5 publicaciones para aumentar engagement en Instagram')">Estrategia Instagram</button>
+            <button class="btn btn-secondary btn-sm" onclick="sendAssistantPrompt('¿Cómo optimizar títulos y descripciones de YouTube para SEO?')">SEO en YouTube</button>
+          </div>
+
+          <div id="assistant-chat-log" style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:16px;height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+            <div style="background:var(--bg-card);border:1px solid var(--border);padding:12px;border-radius:8px;font-size:0.85rem;line-height:1.6;">
+              👋 Hola, soy tu Asistente de Crecimiento NUVIO. Pregúntame sobre optimización de publicaciones, mejores horarios, pilares de contenido o adaptaciones para diferentes industrias.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <input type="text" id="assistant-input" class="form-control" placeholder="Escribe tu consulta de estrategia..." onkeypress="if(event.key==='Enter') sendAssistantMessage()">
+            <button class="btn btn-primary" onclick="sendAssistantMessage()">Consultar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. CONTENT CALENDAR -->
+      <section class="view-section" id="view-calendar">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Calendario de Publicaciones</h2>
+            <p class="page-subtitle">Organización visual de contenidos programados y publicados.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openCreatePostModal()">+ Programar Contenido</button>
+        </div>
+
+        <div class="card-panel">
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-weight:700;font-size:0.8rem;color:var(--text-dim);margin-bottom:10px;">
+            <div>DOM</div><div>LUN</div><div>MAR</div><div>MIÉ</div><div>JUE</div><div>VIE</div><div>SÁB</div>
+          </div>
+          <div id="calendar-days-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+        </div>
+      </section>
+
+      <!-- 6. PUBLISHING QUEUE -->
+      <section class="view-section" id="view-queue">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Cola de Publicación</h2>
+            <p class="page-subtitle">Historial, estados de publicación y reintentos ante fallos.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openCreatePostModal()">+ Crear Publicación</button>
+        </div>
+
+        <div class="card-panel">
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-dim);">
+                <th style="padding:12px;">Título</th>
+                <th style="padding:12px;">Redes</th>
+                <th style="padding:12px;">Estado</th>
+                <th style="padding:12px;">Programación</th>
+                <th style="padding:12px;">Autor</th>
+                <th style="padding:12px;text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="queue-posts-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 7. APPROVALS -->
+      <section class="view-section" id="view-approvals">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Aprobaciones de Publicaciones</h2>
+            <p class="page-subtitle">Ninguna publicación se realiza sin revisión y aprobación humana previa.</p>
+          </div>
+        </div>
+
+        <div id="approvals-cards-container"></div>
+      </section>
+
+      <!-- MEDIA LIBRARY -->
+      <section class="view-section" id="view-media">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Biblioteca de Medios</h2>
+            <p class="page-subtitle">Almacenamiento seguro y organizado de imágenes, videos, miniaturas y logos.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-upload-media')">+ Subir Archivo</button>
+        </div>
+
+        <div class="card-panel" style="padding:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="media-folder-filters">
+            <button class="btn btn-secondary btn-sm" onclick="filterMediaFolder('')">Todos</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterMediaFolder('General')">General</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterMediaFolder('Campañas')">Campañas</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterMediaFolder('Logos')">Logos</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterMediaFolder('Reels')">Reels / Videos</button>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-dim);" id="media-assets-count">0 archivos</div>
+        </div>
+
+        <div class="grid-3" id="media-assets-grid"></div>
+      </section>
+
+      <!-- 8. ANALYTICS -->
+      <section class="view-section" id="view-analytics">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Estadísticas y Rendimiento</h2>
+            <p class="page-subtitle">Datos oficiales obtenidos de Meta, TikTok y Google. Métricas 100% verificadas.</p>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <a class="btn btn-secondary btn-sm" href="/api/v1/analytics/export-csv" target="_blank">📥 Exportar CSV</a>
+            <a class="btn btn-primary btn-sm" href="/api/v1/analytics/report-view" target="_blank">📄 Informe Ejecutivo (PDF)</a>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="panel-title">Métricas por Red Social</div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-dim);">
+                <th style="padding:12px;">Plataforma</th>
+                <th style="padding:12px;">Seguidores</th>
+                <th style="padding:12px;">Impresiones</th>
+                <th style="padding:12px;">Alcance</th>
+                <th style="padding:12px;">Vistas</th>
+                <th style="padding:12px;">Likes</th>
+                <th style="padding:12px;">Comentarios</th>
+                <th style="padding:12px;">Interacción</th>
+              </tr>
+            </thead>
+            <tbody id="analytics-platform-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="card-panel">
+          <div class="panel-title">Publicaciones con Mejor Rendimiento</div>
+          <div id="analytics-top-posts"></div>
+        </div>
+      </section>
+
+      <!-- 9. CLIENTS -->
+      <section class="view-section" id="view-clients">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Clientes de Agencia</h2>
+            <p class="page-subtitle">Gestiona marcas y empresas con estricto aislamiento de datos.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-create-client')">+ Nuevo Cliente</button>
+        </div>
+
+        <div class="grid-3" id="clients-grid"></div>
+      </section>
+
+      <!-- 10. TEAM MEMBERS -->
+      <section class="view-section" id="view-team">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Equipo de Trabajo & Roles</h2>
+            <p class="page-subtitle">Asignación de roles: Super Admin, Agency Admin, Client Admin, Editor y Viewer.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('modal-invite-team')">+ Invitar Miembro</button>
+        </div>
+
+        <div class="card-panel">
+          <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-dim);">
+                <th style="padding:12px;">Nombre</th>
+                <th style="padding:12px;">Email</th>
+                <th style="padding:12px;">Rol</th>
+                <th style="padding:12px;text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="team-members-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 11. BILLING & PLANS -->
+      <section class="view-section" id="view-billing">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Planes y Facturación</h2>
+            <p class="page-subtitle">Administra tu suscripción SaaS y los límites de tu plan.</p>
+          </div>
+        </div>
+
+        <div class="card-panel" style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div>
+              <span style="font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;font-weight:700;">Plan Actual</span>
+              <h3 style="font-size:1.6rem;font-weight:800;color:var(--text-main);" id="bill-current-plan">Pro</h3>
+              <p style="font-size:0.8rem;color:var(--success);font-weight:600;margin-top:2px;" id="bill-sub-status">ACTIVO</p>
+            </div>
+            <div style="display:flex;gap:20px;">
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-dim);">Cuentas Conectadas</span>
+                <p style="font-size:1.1rem;font-weight:700;" id="bill-acc-meter">- / -</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-dim);">Publicaciones del Mes</span>
+                <p style="font-size:1.1rem;font-weight:700;" id="bill-posts-meter">- / -</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-dim);">Créditos de IA</span>
+                <p style="font-size:1.1rem;font-weight:700;" id="bill-ai-meter">- / -</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3" id="billing-plans-cards"></div>
+      </section>
+
+      <!-- 12. SETTINGS -->
+      <section class="view-section" id="view-settings">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Configuración del Sistema</h2>
+            <p class="page-subtitle">Personaliza tu empresa, idioma, zona horaria y verifica las credenciales de API.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <form class="card-panel" onsubmit="saveSettingsForm(event)">
+            <h3 style="font-size:1rem;margin-bottom:16px;">Perfil y Empresa</h3>
+
+            <div class="form-group">
+              <label class="form-label">Nombre de la Empresa / Agencia</label>
+              <input type="text" id="set-org-name" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Industria Principal</label>
+              <input type="text" id="set-industry" class="form-control">
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Idioma Predeterminado</label>
+                <select id="set-language" class="form-control">
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                  <option value="ht">Kreyòl Ayisyen</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Zona Horaria</label>
+                <select id="set-timezone" class="form-control">
+                  <option value="America/New_York">America/New_York (EST)</option>
+                  <option value="America/Chicago">America/Chicago (CST)</option>
+                  <option value="America/Los_Angeles">America/Los_Angeles (PST)</option>
+                  <option value="America/Santo_Domingo">America/Santo_Domingo</option>
+                  <option value="America/Port-au-Prince">America/Port-au-Prince</option>
+                  <option value="Europe/Madrid">Europe/Madrid (CET)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top:10px;">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;">
+                <input type="checkbox" id="set-auto-publish" style="width:16px;height:16px;">
+                <span>Permitir publicación automática programada sin requerir aprobación manual previa</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top:10px;">Guardar Configuración</button>
+          </form>
+
+          <div class="card-panel">
+            <h3 style="font-size:1rem;margin-bottom:16px;">Estado de Integraciones & APIs Oficiales</h3>
+            <div id="settings-api-checks"></div>
+            <div style="margin-top:20px;padding:12px;background:var(--bg-input);border-radius:8px;font-size:0.8rem;color:var(--text-dim);line-height:1.5;">
+              🔒 Todos los tokens de acceso social se almacenan cifrados con AES-256 en la base de datos. Ninguna clave API se expone en el navegador.
+            </div>
+            <div style="margin-top:16px;display:flex;gap:12px;font-size:0.78rem;">
+              <a href="/privacy-policy" target="_blank" style="color:var(--primary);">Política de Privacidad</a>
+              <a href="/terms-of-service" target="_blank" style="color:var(--primary);">Términos del Servicio</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODAL: CREATE POST -->
+<div class="modal-overlay" id="modal-create-post">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Nueva Publicación</h3>
+      <button class="modal-close" onclick="closeModal('modal-create-post')">&times;</button>
+    </div>
+    <form onsubmit="submitCreatePostForm(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Título de la Publicación</label>
+          <input type="text" id="modal-post-title" class="form-control" placeholder="Ej: Anuncio Campaña Verano">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Texto / Contenido</label>
+          <textarea id="modal-post-content" class="form-control" style="min-height:120px;" placeholder="Escribe el contenido o cópialo desde el AI Content Studio..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Redes Sociales Destino</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;"><input type="checkbox" value="instagram" class="post-plat-check" checked> Instagram</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;"><input type="checkbox" value="facebook" class="post-plat-check"> Facebook</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;"><input type="checkbox" value="tiktok" class="post-plat-check"> TikTok</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;"><input type="checkbox" value="youtube" class="post-plat-check"> YouTube</label>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Fecha y Hora Programada (Opcional)</label>
+            <input type="datetime-local" id="modal-post-datetime" class="form-control">
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;padding-top:20px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
+              <input type="checkbox" id="modal-post-approval" checked>
+              <span>Enviar a aprobación humana</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-post')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Publicación</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: MANUAL CONNECT -->
+<div class="modal-overlay" id="modal-manual-connect">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Conexión de Cuenta</h3>
+      <button class="modal-close" onclick="closeModal('modal-manual-connect')">&times;</button>
+    </div>
+    <form onsubmit="submitManualConnect(event)">
+      <div class="modal-body">
+        <input type="hidden" id="manual-conn-platform">
+        <div class="form-group">
+          <label class="form-label">Nombre de Usuario (@handle)</label>
+          <input type="text" id="manual-conn-user" class="form-control" placeholder="Ej: nuviogrowth_official" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Token de Acceso Oficial</label>
+          <input type="text" id="manual-conn-token" class="form-control" placeholder="Token de desarrollador o verificación oficial">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-manual-connect')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Conectar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: PREVIEW POST (METRICOOL STYLE VISUAL MOCKUP) -->
+<div class="modal-overlay" id="modal-preview-post">
+  <div class="modal-dialog" style="max-width: 640px;">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <h3 class="modal-title" id="preview-modal-title">Vista Previa de Publicación</h3>
+        <div id="preview-modal-status"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-preview-post')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:16px 24px;">
+      <!-- Platform mockup tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;" id="preview-mockup-tabs">
+        <button class="btn btn-secondary btn-sm preview-tab-btn active" data-mockup="instagram" onclick="switchMockupPlatform('instagram')">Instagram</button>
+        <button class="btn btn-secondary btn-sm preview-tab-btn" data-mockup="facebook" onclick="switchMockupPlatform('facebook')">Facebook</button>
+        <button class="btn btn-secondary btn-sm preview-tab-btn" data-mockup="tiktok" onclick="switchMockupPlatform('tiktok')">TikTok</button>
+        <button class="btn btn-secondary btn-sm preview-tab-btn" data-mockup="youtube" onclick="switchMockupPlatform('youtube')">YouTube</button>
+      </div>
+
+      <!-- Visual Mockup Container -->
+      <div id="preview-mockup-container" style="background:#000;border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:440px;margin:0 auto;box-shadow:var(--shadow);">
+        <!-- Injected dynamically via app.js renderMockup() -->
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <div id="preview-modal-footer-info" style="font-size:0.75rem;color:var(--text-dim);"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-preview-post')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CREATE CLIENT -->
+<div class="modal-overlay" id="modal-create-client">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Nuevo Cliente de Agencia</h3>
+      <button class="modal-close" onclick="closeModal('modal-create-client')">&times;</button>
+    </div>
+    <form onsubmit="submitCreateClient(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nombre del Cliente / Marca</label>
+          <input type="text" id="client-name" class="form-control" placeholder="Ej: Nova Retail Corp" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industria</label>
+          <input type="text" id="client-industry" class="form-control" placeholder="Ej: E-commerce de Moda">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas / Instrucciones</label>
+          <textarea id="client-notes" class="form-control" placeholder="Objetivos y directrices específicas..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-create-client')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Crear Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: INVITE TEAM -->
+<div class="modal-overlay" id="modal-invite-team">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Invitar Miembro del Equipo</h3>
+      <button class="modal-close" onclick="closeModal('modal-invite-team')">&times;</button>
+    </div>
+    <form onsubmit="submitInviteMember(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nombre Completo</label>
+          <input type="text" id="member-name" class="form-control" placeholder="Ej: Carlos Gómez" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Profesional</label>
+          <input type="email" id="member-email" class="form-control" placeholder="carlos@agencia.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rol y Permisos</label>
+          <select id="member-role" class="form-control">
+            <option value="editor">Editor (Crea y programa contenidos)</option>
+            <option value="client_admin">Client Admin (Revisa y aprueba contenidos)</option>
+            <option value="agency_admin">Agency Admin (Acceso completo de agencia)</option>
+            <option value="viewer">Viewer (Solo lectura de estadísticas)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-invite-team')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Enviar Invitación</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: UPLOAD MEDIA -->
+<div class="modal-overlay" id="modal-upload-media">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Subir Archivo a Biblioteca</h3>
+      <button class="modal-close" onclick="closeModal('modal-upload-media')">&times;</button>
+    </div>
+    <form onsubmit="submitUploadMedia(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Seleccionar Archivo (Imagen o Video hasta 50MB)</label>
+          <input type="file" id="media-file-input" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" required>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Carpeta de Destino</label>
+            <select id="media-upload-folder" class="form-control">
+              <option value="General">General</option>
+              <option value="Campañas">Campañas</option>
+              <option value="Logos">Logos</option>
+              <option value="Reels">Reels / Videos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Etiquetas (Opcional)</label>
+            <input type="text" id="media-upload-tags" class="form-control" placeholder="Ej: verano, promo, producto">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-upload-media')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-upload">Subir Archivo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: GENERATE HASHTAGS -->
+<div class="modal-overlay" id="modal-generate-hashtags">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Generador Estratégico de Hashtags</h3>
+      <button class="modal-close" onclick="closeModal('modal-generate-hashtags')">&times;</button>
+    </div>
+    <form onsubmit="submitGenerateHashtags(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tema, Nicho o Texto del Post</label>
+          <input type="text" id="ht-input-topic" class="form-control" placeholder="Ej: Zapatos deportivos ecológicos" required>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Red Social</label>
+            <select id="ht-input-platform" class="form-control">
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+              <option value="facebook">Facebook</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cantidad</label>
+            <input type="number" id="ht-input-count" class="form-control" value="15" min="5" max="30">
+          </div>
+        </div>
+
+        <div id="ht-results-container" style="display:none;margin-top:16px;">
+          <label class="form-label">Hashtags Generados por Nicho & Comunidad:</label>
+          <div id="ht-tags-pill-box" style="display:flex;flex-wrap:wrap;gap:6px;background:var(--bg-input);padding:14px;border-radius:8px;border:1px solid var(--border);margin-bottom:12px;"></div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="copyGeneratedHashtags()">📋 Copiar Todos los Hashtags</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-generate-hashtags')">Cerrar</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-ht">Generar Hashtags</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/i18n.js"></script>
+<script src="/static/js/charts.js"></script>
+<script src="/static/js/app.js"></script>
+<script>
+// Assistant helpers
+function sendAssistantPrompt(text) {
+  document.getElementById("assistant-input").value = text;
+  sendAssistantMessage();
+}
+
+function sendAssistantMessage() {
+  const inp = document.getElementById("assistant-input");
+  const msg = inp.value.trim();
+  if (!msg) return;
+
+  const log = document.getElementById("assistant-chat-log");
+  const userMsg = document.createElement("div");
+  userMsg.style.alignSelf = "flex-end";
+  userMsg.style.background = "var(--primary-light)";
+  userMsg.style.color = "#818cf8";
+  userMsg.style.padding = "10px 14px";
+  userMsg.style.borderRadius = "8px";
+  userMsg.style.maxWidth = "80%";
+  userMsg.style.fontSize = "0.85rem";
+  userMsg.textContent = msg;
+  log.appendChild(userMsg);
+  inp.value = "";
+
+  setTimeout(() => {
+    const aiMsg = document.createElement("div");
+    aiMsg.style.background = "var(--bg-card)";
+    aiMsg.style.border = "1px solid var(--border)";
+    aiMsg.style.padding = "12px 16px";
+    aiMsg.style.borderRadius = "8px";
+    aiMsg.style.maxWidth = "85%";
+    aiMsg.style.fontSize = "0.85rem";
+    aiMsg.style.lineHeight = "1.6";
+
+    if (msg.includes("TikTok")) {
+      aiMsg.innerHTML = "💡 <strong>Ganchos Virales de TikTok:</strong><br>1. 'Nadie en [tu industria] te dirá esto porque pierden dinero...'<br>2. 'Si todavía estás haciendo [error común], mira esto antes de que sea tarde.'<br>3. 'Esta herramienta de 5 minutos me ahorró 20 horas de trabajo esta semana.'<br><br>👉 Mantén los primeros 2 segundos con movimiento visual y texto legible.";
+    } else if (msg.includes("Instagram")) {
+      aiMsg.innerHTML = "📊 <strong>Pilares de Engagement para Instagram:</strong><br>• Lunes: Carrusel educativo con problema y solución paso a paso.<br>• Miércoles: Reel de 15 segundos con gancho fuerte y llamado a comentar.<br>• Viernes: Historia o caso de éxito real con antes y después.<br><br>💡 Responde a cada comentario en los primeros 45 minutos tras publicar.";
+    } else {
+      aiMsg.innerHTML = "🚀 <strong>Consejo Estratégico Nuvio:</strong> Para maximizar el algoritmo, programa publicaciones consistentes en tu horario de mayor audiencia activa (entre 12:00 PM y 3:00 PM o 7:00 PM y 9:00 PM en tu zona horaria) y pide siempre a tu equipo revisar en la sección de Aprobaciones.";
+    }
+
+    log.appendChild(aiMsg);
+    log.scrollTop = log.scrollHeight;
+  }, 400);
+}
+
+async function submitCreateClient(e) {
+  e.preventDefault();
+  try {
+    await apiRequest("/clients", {
+      method: "POST",
+      body: JSON.stringify({
+        name: document.getElementById("client-name").value,
+        industry: document.getElementById("client-industry").value,
+        notes: document.getElementById("client-notes").value
+      })
+    });
+    closeModal("modal-create-client");
+    showToast("Cliente de agencia creado", "success");
+    loadClients();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function submitInviteMember(e) {
+  e.preventDefault();
+  try {
+    await apiRequest("/team/invite", {
+      method: "POST",
+      body: JSON.stringify({
+        full_name: document.getElementById("member-name").value,
+        email: document.getElementById("member-email").value,
+        role: document.getElementById("member-role").value
+      })
+    });
+    closeModal("modal-invite-team");
+    showToast("Miembro invitado correctamente", "success");
+    loadTeam();
+  } catch (err) {
+    console.error(err);
+  }
+}
+</script>
+</body>
+</html>
+

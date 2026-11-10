@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: nuviabot_web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://nuvio:nuviopassword@postgres:5432/nuviabot
+      - REDIS_URL=redis://redis:6379/0
+      - ENVIRONMENT=production
+      - DEBUG=False
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - uploads_data:/app/app/static/uploads
+
+  scheduler:
+    build: .
+    container_name: nuviabot_scheduler
+    restart: unless-stopped
+    command: python scripts/run_scheduler.py
+    environment:
+      - DATABASE_URL=postgresql://nuvio:nuviopassword@postgres:5432/nuviabot
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - web
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: nuviabot_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nuvio
+      POSTGRES_PASSWORD: nuviopassword
+      POSTGRES_DB: nuviabot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: nuviabot_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  uploads_data:
+
