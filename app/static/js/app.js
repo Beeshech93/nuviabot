@@ -1778,14 +1778,18 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Check for OAuth redirect return parameters
-  const urlParams = new URLSearchParams(window.location.search);
+  const hashRaw = window.location.hash || "";
+  let urlParams = new URLSearchParams(window.location.search);
+  if (!urlParams.get("connected") && !urlParams.get("error") && hashRaw.includes("?")) {
+    urlParams = new URLSearchParams(hashRaw.split("?")[1]);
+  }
   if (urlParams.get("connected") === "true") {
     const plat = urlParams.get("platform") || "cuenta";
     showToast(`✅ ${plat.toUpperCase()} conectada exitosamente a tu espacio de trabajo.`, "success");
-    window.history.replaceState({}, document.title, window.location.pathname + (window.location.hash || "#social"));
+    window.history.replaceState({}, document.title, window.location.pathname + "#social");
   } else if (urlParams.get("error")) {
     showToast(`❌ Error al conectar: ${decodeURIComponent(urlParams.get("error"))}`, "danger");
-    window.history.replaceState({}, document.title, window.location.pathname + (window.location.hash || "#social"));
+    window.history.replaceState({}, document.title, window.location.pathname + "#social");
   }
 
   // Handle URL hash router
