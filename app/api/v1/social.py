@@ -313,3 +313,48 @@ async def sync_account(
 
     return account
 
+
+@router.post("/accounts/{account_id}/refresh", response_model=SocialAccountResponse)
+async def refresh_social_token(
+    account_id: int,
+    current_user: User = Depends(require_admin),
+    org: Organization = Depends(get_current_organization),
+    db: Session = Depends(get_db),
+):
+    """Refreshes expired or aging official OAuth access tokens using platform renewal APIs."""
+    account = (
+        db.query(SocialAccount)
+        .filter(SocialAccount.id == account_id, SocialAccount.organization_id == org.id)
+        .first()
+    )
+    if not account:
+        raise ResourceNotFoundException("SocialAccount")
+
+    adapter = get_social_adapter(account.platform)
+    token_to_refresh = (
+        decrypt_token(account.encrypted_refresh_token)
+        if account.encrypted_refresh_token
+        else decrypt_token(account.encrypted_access_token)
+    )
+
+    try:
+        new_token_data = await adapter.refresh_access_token(token_to_refresh)
+        new_access_token = new_token_data.get("access_token")
+        if new_access_token:
+            account.encrypted_access_token = encrypt_token(new_access_token)
+        if new_token_data.get("refresh_token"):
+            account.encrypted_refresh_token = encrypt_token(new_token_data.get("refresh_token"))
+
+        account.status = "connected"
+        account.error_message = ""
+        account.last_synced_at = datetime.now(timezone.utc)
+        db.commit()
+        db.refresh(account)
+        return account
+    except Exception as e:
+        account.status = "error"
+        account.error_message = f"Fallo al renovar token: {str(e)}"
+        db.commit()
+        raise NuvioException(detail=f"Token renewal failed: {str(e)}")
+
+

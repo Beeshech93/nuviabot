@@ -38,7 +38,8 @@ class Settings(BaseSettings):
         else "sqlite:///./nuviabot.db"
     )
     SUPABASE_URL: str = "https://zghqluchsptyvuyhbyjm.supabase.co"
-    SUPABASE_KEY: str = ""
+    SUPABASE_PUBLISHABLE_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
 
     # OpenAI / AI Assistant
     OPENAI_API_KEY: str = ""
