@@ -968,7 +968,12 @@ textarea.form-control {
             <h2 class="page-title">Cuentas Sociales Oficiales</h2>
             <p class="page-subtitle">Conexión con Instagram, Facebook, TikTok y YouTube mediante APIs oficiales y seguras.</p>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="loadSocialAccounts()">Sincronizar Cuentas</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="triggerAutoConnect('all')" style="background:linear-gradient(135deg,#10b981,#06b6d4);border:none;font-weight:700;box-shadow:0 0 12px rgba(16,185,129,0.35);padding:8px 14px;">
+              ⚡ Auto-Conectar Todas (@lajanrapid)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="loadSocialAccounts()">Sincronizar</button>
+          </div>
         </div>
 
         <div class="grid-2" id="social-cards-grid"></div>
@@ -2542,7 +2547,7 @@ textarea.form-control {
 
 <script src="/static/js/i18n.js?v=20261110_10"></script>
 <script src="/static/js/charts.js?v=20261110_10"></script>
-<script src="/static/js/app.v2.js?v=20261110_16"></script>
+<script src="/static/js/app.v2.js?v=20261110_17"></script>
 <script>
 // Global Client & Platform Switchers
 if (typeof window.switchActiveClient === "undefined") {

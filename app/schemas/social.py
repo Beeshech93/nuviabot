@@ -41,6 +41,12 @@ class ConnectManualAccountRequest(BaseModel):
     client_id: Optional[int] = None
 
 
+class AutoConnectRequest(BaseModel):
+    platform: str = "all"  # "all", "facebook", "instagram", "tiktok", "youtube"
+    username: Optional[str] = "lajanrapid"
+    client_id: Optional[int] = None
+
+
 class TestConnectionResponse(BaseModel):
     success: bool
     platform: str

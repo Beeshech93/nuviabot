@@ -541,9 +541,9 @@ async function loadSocialAccounts() {
             <p style="font-size:0.82rem;color:var(--text-muted);margin:16px 0;">${plat.desc}. Conecta tu cuenta oficial para habilitar publicación programada y métricas.</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="startOAuthConnect('${plat.id}')">Conectar con OAuth</button>
+            <button class="btn btn-primary btn-sm" style="flex:1.2;background:linear-gradient(135deg,#10b981,#06b6d4);border:none;font-weight:700;" onclick="triggerAutoConnect('${plat.id}')">⚡ Auto-Conectar</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="startOAuthConnect('${plat.id}')">🔑 Login OAuth</button>
             <button class="btn btn-secondary btn-sm" onclick="openManualConnectModal('${plat.id}')">Token</button>
-            <button class="btn btn-secondary btn-sm" style="background:rgba(236,72,153,0.15);color:#ec4899;border-color:rgba(236,72,153,0.3);" onclick="openBoosterForAccount('${plat.id}', 'lajanrapid')">🚀 Booster</button>
           </div>
         `;
       }
@@ -553,6 +553,28 @@ async function loadSocialAccounts() {
     console.error(e);
   }
 }
+
+async function triggerAutoConnect(platform = "all") {
+  try {
+    const isAll = platform === "all";
+    showToast(isAll ? "⚡ Auto-conectando todas las cuentas oficiales..." : `⚡ Conectando ${platform.toUpperCase()}...`, "info");
+    const cid = (typeof currentActiveClientId !== "undefined" && currentActiveClientId) ? parseInt(currentActiveClientId) : null;
+    const res = await apiRequest("/social/auto-connect", {
+      method: "POST",
+      body: JSON.stringify({
+        platform,
+        username: "lajanrapid",
+        client_id: cid
+      })
+    });
+    showToast(res.message || "Cuentas conectadas exitosamente", "success");
+    await loadSocialAccounts();
+  } catch (err) {
+    console.error("triggerAutoConnect error:", err);
+    showToast("Error al auto-conectar: " + (err.message || err), "danger");
+  }
+}
+window.triggerAutoConnect = triggerAutoConnect;
 
 async function startOAuthConnect(platform) {
   try {
